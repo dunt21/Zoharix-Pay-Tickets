@@ -46,7 +46,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
 
 ## ✅ Notes for Your Team
 
-docs/ folder is the central place for all project documentation.
+1. docs/ folder is the central place for all project documentation.
 
 Contributors only need README, CONTRIBUTING.md, and branch naming guide to start.
 
