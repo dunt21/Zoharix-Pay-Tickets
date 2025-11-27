@@ -48,7 +48,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
 
    1. docs/ folder is the central place for all project documentation.
    2. Contributors only need README, CONTRIBUTING.md, and branch naming guide to start.
-   3.No issue templates or project boards are included for simplicity.
+   3. No issue templates or project boards are included for simplicity.
    4.
 
 
