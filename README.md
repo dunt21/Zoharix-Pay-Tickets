@@ -48,7 +48,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
 
 All finalized project documentation PDFs are stored in the [docs](docs/) folder:
 
-- [Project Documentation](/docs/📘 PROJECT DOCUMENTATION.pdf)
+- [Project Documentation](docs/Project-Documentation.pdf)
 
 
 ## ✅ Notes for Your Team
