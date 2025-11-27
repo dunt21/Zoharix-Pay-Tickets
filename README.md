@@ -44,6 +44,13 @@ npm install
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
 
+## Documentation
+
+All finalized project documentation PDFs are stored in the [docs](docs/) folder:
+
+- [Project Documentation](docs/project-documentation.pdf)
+
+
 ## ✅ Notes for Your Team
 
    1. docs/ folder is the central place for all project documentation.
