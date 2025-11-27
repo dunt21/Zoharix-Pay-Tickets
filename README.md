@@ -49,6 +49,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
 All finalized project documentation PDFs are stored in the [docs](docs/) folder:
 
 - [Project Overview](docs/Project-Overview.pdf)
+- [User Flow Diagrams](docs/User-Flow-Diagrams.pdf)
+  
 
 
 ## ✅ Notes for Your Team
