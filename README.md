@@ -1,2 +1,31 @@
-# Zoharix-Pay-Tickets
-Zoharix Pay + Tickets is a unified event ticketing and business booking platform. - Event organizers to create events, sell tickets, and track attendance. - Businesses to host services, manage bookings, and accept payments. - Users to browse events/services, book/reserve spots, and receive digital confirmation 
+# Zoharix Pay + Tickets
+
+**Zoharix Pay + Tickets** is a unified event ticketing and business booking platform. It allows:
+
+- Event organizers to create events, sell tickets, and track attendance.
+- Businesses (salons, barbers, trainers, restaurants, etc.) to host services, manage bookings, and accept payments.
+- Users to browse events/services, book/reserve spots, and receive digital confirmation (QR code, receipts).
+
+## Features
+
+- Event creation and management
+- Ticketing (free and paid)
+- Business profiles with services and booking slots
+- Payments through MoMo, cards, USSD, and bank transfer
+- QR code tickets and check-in
+- Automated receipts and notifications
+- Premium poster generation (AI-powered)
+- Dashboard analytics
+
+## Tech Stack (MVP)
+
+- **Frontend:** React, React Native, Tailwind CSS
+- **Backend:** Node.js, Express
+- **Database:** MongoDB
+- **Storage:** Cloudinary/Supabase
+- **Payments:** MoMo API, Paystack, Stripe, USSD
+- **AI Integration:** HuggingFace/OpenRouter for poster generation
+
+## Getting Started
+
+1. Clone the repository:
