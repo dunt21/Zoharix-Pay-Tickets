@@ -29,3 +29,18 @@
 ## Getting Started
 
 1. Clone the repository:
+   git clone https://github.com/
+<username>/Zoharix-Pay-Tickets.git
+
+2. Navigate to backend/frontend folders and install dependencies:
+
+
+npm install
+
+3. Follow instructions in `docs/` for API keys, env setup, and running locally.
+
+---
+
+## How to Contribute
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
