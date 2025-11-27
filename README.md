@@ -43,3 +43,13 @@ npm install
 ## How to Contribute
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
+
+## ✅ Notes for Your Team
+
+docs/ folder is the central place for all project documentation.
+
+Contributors only need README, CONTRIBUTING.md, and branch naming guide to start.
+
+No issue templates or project boards are included for simplicity.
+
+This setup keeps the repository clean and easy to navigate for new contributors.
