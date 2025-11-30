@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBolt, FaTwitter, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaBolt, FaTwitter, FaYoutube, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import './Footer.css';
 
 const Footer: React.FC = () => {
@@ -15,16 +15,16 @@ const Footer: React.FC = () => {
                         Empowering event organizers and businesses across Africa
                     </p>
                     <div className="social-links">
-                        <a href="#" className="social-link" aria-label="Twitter">
+                        <a href="https://x.com/zoharix_tech" className="social-link" aria-label="Twitter">
                             <FaTwitter />
                         </a>
-                        <a href="#" className="social-link" aria-label="Facebook">
-                            <FaFacebook />
+                        <a href="https://www.youtube.com/@TechTutor_Tv" className="social-link" aria-label="YouTube">
+                            <FaYoutube />
                         </a>
-                        <a href="#" className="social-link" aria-label="Instagram">
+                        <a href="https://www.instagram.com/zoharix?igsh=Z3gzMjR1aGFwbHBv&utm_source=ig_contact_invite" className="social-link" aria-label="Instagram">
                             <FaInstagram />
                         </a>
-                        <a href="#" className="social-link" aria-label="LinkedIn">
+                        <a href="https://www.linkedin.com/company/zoharix/" className="social-link" aria-label="LinkedIn">
                             <FaLinkedin />
                         </a>
                     </div>
@@ -43,18 +43,18 @@ const Footer: React.FC = () => {
                 <div className="footer-section">
                     <h4 className="footer-heading">Company</h4>
                     <ul className="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Press Kit</a></li>
+                        <li><a href="https://www.zoharix.tech/">About Us</a></li>
+                        <li><a href="https://www.zoharix.tech/">Careers</a></li>
+                        <li><a href="https://www.zoharix.tech/">Blog</a></li>
+                        <li><a href="https://www.zoharix.tech/">Press Kit</a></li>
                     </ul>
                 </div>
 
                 <div className="footer-section">
                     <h4 className="footer-heading">Support</h4>
                     <ul className="footer-links">
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="https://www.zoharix.tech/home.html#contact">Help Center</a></li>
+                        <li><a href="https://www.zoharix.tech/home.html#contact">Contact Us</a></li>
                         <li><a href="#">Privacy Policy</a></li>
                         <li><a href="#">Terms of Service</a></li>
                     </ul>
