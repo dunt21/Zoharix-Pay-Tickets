@@ -3,19 +3,21 @@ import { FaStar } from 'react-icons/fa';
 import './TestimonialCard.css';
 
 interface TestimonialCardProps {
+    name: string;
+    role: string;
+    company: string;
+    image: string;
+    content: string;
     rating: number;
-    text: string;
-    authorName: string;
-    authorTitle: string;
-    authorInitials: string;
 }
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({
+    name,
+    role,
+    company,
+    image,
+    content,
     rating,
-    text,
-    authorName,
-    authorTitle,
-    authorInitials,
 }) => {
     return (
         <div className="testimonial-card">
@@ -24,12 +26,12 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
                     <FaStar key={index} className="star-icon" />
                 ))}
             </div>
-            <p className="testimonial-text">"{text}"</p>
+            <p className="testimonial-text">"{content}"</p>
             <div className="testimonial-author">
-                <div className="author-avatar">{authorInitials}</div>
+                <img src={image} alt={name} className="author-avatar" />
                 <div className="author-info">
-                    <div className="author-name">{authorName}</div>
-                    <div className="author-title">{authorTitle}</div>
+                    <div className="author-name">{name}</div>
+                    <div className="author-title">{role} at {company}</div>
                 </div>
             </div>
         </div>
