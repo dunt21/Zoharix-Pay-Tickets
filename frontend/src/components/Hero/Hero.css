@@ -494,6 +494,8 @@
     .hero {
         padding-left: 1.5rem;
         padding-right: 1.5rem;
+        overflow-x: hidden;
+        /* Ensure no horizontal scroll */
     }
 
     .hero-title {
@@ -538,8 +540,37 @@
 
     .hero-visual {
         height: 350px;
-        transform: scale(0.65);
+        width: 100%;
         margin-top: -2rem;
         margin-bottom: -2rem;
+        overflow: visible;
+        /* Allow 3D elements to show if scaled */
+    }
+
+    .hero-3d-container {
+        width: 100%;
+        max-width: 300px;
+        /* Constrain width on mobile */
+        transform: scale(0.6);
+        /* Slightly smaller scale */
+        transform-origin: center center;
+        margin: 0 auto;
+        /* Center the container */
+    }
+
+    .hero-card {
+        width: 280px;
+        /* Reduce card width on mobile */
+        padding: 1rem;
+    }
+
+    /* Adjust card positions for smaller width */
+    .card-ticket {
+        transform: translateZ(-50px) translateX(20px);
+    }
+
+    .card-payment {
+        transform: translateZ(50px) translateX(10px);
+        right: 10px;
     }
 }
