@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaPlay, FaShieldAlt, FaBolt, FaHeadset, FaTicketAlt, FaChartLine, FaCreditCard } from 'react-icons/fa';
 import Button from '../Button/Button';
 import './Hero.css';
@@ -29,9 +30,11 @@ const Hero: React.FC = () => {
                     </p>
 
                     <div className="hero-cta">
-                        <Button variant="primary" icon={<FaBolt />}>
-                            Start Free Trial
-                        </Button>
+                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                            <Button variant="primary" icon={<FaBolt />}>
+                                Start Free Trial
+                            </Button>
+                        </Link>
                         <Button variant="outline" icon={<FaPlay />}>
                             Watch Demo
                         </Button>

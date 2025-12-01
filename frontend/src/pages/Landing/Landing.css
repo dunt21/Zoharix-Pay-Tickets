@@ -16,11 +16,11 @@
   --card-bg: #0e0e0e;
   --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   --transition-all: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-  --accent-color: #4f46e5;
-  /* Indigo */
-  --accent-hover: #4338ca;
-  --gradient-new: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
-  /* Indigo -> Pink */
+  --accent-color: #8b5cf6;
+  /* Violet */
+  --accent-hover: #7c3aed;
+  --gradient-new: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+  /* Violet -> Fuchsia */
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.12);
   --success-color: #22c55e;
@@ -43,7 +43,7 @@
   --primary-light: #818cf8;
   --primary-dark: var(--accent-hover);
 
-  --accent-glow: rgba(79, 70, 229, 0.5);
+  --accent-glow: rgba(139, 92, 246, 0.5);
 
   --border-color: var(--glass-border);
   --border-hover: var(--accent-color);
@@ -53,7 +53,7 @@
   --gradient-bg: linear-gradient(135deg, #030303 0%, #0a0a0a 100%);
 
   --shadow-card: var(--card-shadow);
-  --shadow-hover: 0 20px 40px rgba(79, 70, 229, 0.25);
+  --shadow-hover: 0 20px 40px rgba(139, 92, 246, 0.25);
 
   --backdrop-blur: blur(12px);
 
@@ -74,21 +74,21 @@
   --text-secondary: #334155;
   --text-tertiary: #64748B;
 
-  --primary-color: #4f46e5;
-  --primary-light: #6366f1;
-  --primary-dark: #4338ca;
+  --primary-color: #8b5cf6;
+  --primary-light: #a78bfa;
+  --primary-dark: #7c3aed;
 
-  --accent-glow: rgba(79, 70, 229, 0.2);
+  --accent-glow: rgba(139, 92, 246, 0.2);
 
   --border-color: #E2E8F0;
-  --border-hover: #4f46e5;
+  --border-hover: #8b5cf6;
 
-  --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
-  --gradient-text: linear-gradient(135deg, #4338ca 0%, #db2777 100%);
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+  --gradient-text: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
   --gradient-bg: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
 
   --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.05);
-  --shadow-hover: 0 20px 40px rgba(79, 70, 229, 0.1);
+  --shadow-hover: 0 20px 40px rgba(139, 92, 246, 0.1);
 }
 
 * {

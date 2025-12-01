@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { IoWalletOutline } from 'react-icons/io5';
 import Button from '../Button/Button';
@@ -60,13 +61,15 @@ const Navbar: React.FC = () => {
                     <li><a href="#testimonials" onClick={closeMobileMenu}>Testimonials</a></li>
                     <li><ThemeToggle /></li>
                     <li>
-                        <Button
-                            variant="primary"
-                            className="nav-cta-btn"
-                            onClick={closeMobileMenu}
-                        >
-                            Get Started
-                        </Button>
+                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                            <Button
+                                variant="primary"
+                                className="nav-cta-btn"
+                                onClick={closeMobileMenu}
+                            >
+                                Get Started
+                            </Button>
+                        </Link>
                     </li>
                 </ul>
             </div>
