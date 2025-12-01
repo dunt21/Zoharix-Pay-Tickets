@@ -11,7 +11,7 @@ const Testimonials: React.FC = () => {
             role: "Event Organizer",
             company: "TechSummit",
             image: "https://randomuser.me/api/portraits/women/44.jpg",
-            content: "Zoharix has completely transformed how we handle ticketing. The analytics are a game-changer!",
+            content: "EventZ has completely transformed how we handle ticketing. The analytics are a game-changer!",
             rating: 5
         },
         {
@@ -59,7 +59,7 @@ const Testimonials: React.FC = () => {
         <section className="testimonials">
             <SectionHeader
                 title="Loved by Organizers"
-                subtitle="See what event professionals are saying about Zoharix."
+                subtitle="See what event professionals are saying about EventZ."
             />
 
             <div className="testimonials-marquee-container">

@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
                 <div className="footer-section">
                     <div className="footer-logo">
                         <FaBolt className="logo-icon" />
-                        <span className="logo-text">Zoharix Pay + Tickets</span>
+                        <span className="logo-text">EventZ + Tickets</span>
                     </div>
                     <p className="footer-tagline">
                         Empowering event organizers and businesses across Africa

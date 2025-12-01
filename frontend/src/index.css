@@ -11,6 +11,8 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 body {
@@ -27,4 +29,9 @@ body {
 #root {
   width: 100%;
   min-height: 100vh;
+}
+
+/* Hide Scrollbar */
+::-webkit-scrollbar {
+  display: none;
 }

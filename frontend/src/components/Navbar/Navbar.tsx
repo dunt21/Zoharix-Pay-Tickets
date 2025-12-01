@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
             <div className="nav-container">
                 <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                     <IoWalletOutline className="logo-icon" />
-                    <span className="logo-text">Zoharix Pay</span>
+                    <span className="logo-text">EventZ</span>
                 </div>
 
                 {/* Mobile Menu Toggle */}
