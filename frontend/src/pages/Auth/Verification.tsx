@@ -6,8 +6,8 @@ const Verification: React.FC = () => {
     return (
         <div className="auth-form-wrapper">
             <div className="auth-title-section">
-                <h1>Verification</h1>
-                <p>This is the verification</p>
+                <h1>Create Account</h1>
+                <p>This is the sign up</p>
             </div>
 
             <p className="auth-footer-text">

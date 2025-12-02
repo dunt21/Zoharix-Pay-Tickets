@@ -7,48 +7,48 @@ const Testimonials: React.FC = () => {
     const testimonials = [
         {
             id: 1,
-            name: "Sarah Jenkins",
+            name: "Amara Okafor",
             role: "Event Organizer",
-            company: "TechSummit",
-            image: "https://randomuser.me/api/portraits/women/44.jpg",
-            content: "EventZ has completely transformed how we handle ticketing. The analytics are a game-changer!",
+            company: "Lagos Tech Summit",
+            image: "https://i.pravatar.cc/150?img=5",
+            content: "EventZ has completely transformed how we handle ticketing for our tech conferences across West Africa. The analytics are a game-changer!",
             rating: 5
         },
         {
             id: 2,
-            name: "Michael Chen",
+            name: "Kwame Mensah",
             role: "Venue Manager",
-            company: "The Grand Hall",
-            image: "https://randomuser.me/api/portraits/men/32.jpg",
-            content: "Seamless payments and instant payouts. It's exactly what we needed for our high-volume events.",
+            company: "Accra Convention Centre",
+            image: "https://i.pravatar.cc/150?img=12",
+            content: "Seamless payments and instant payouts in multiple African currencies. It's exactly what we needed for our high-volume events.",
             rating: 5
         },
         {
             id: 3,
-            name: "Jessica Ford",
+            name: "Zainab Diallo",
             role: "Festival Director",
-            company: "Summer Vibes",
-            image: "https://randomuser.me/api/portraits/women/68.jpg",
-            content: "The best platform for managing large-scale festivals. Customer support is also top-notch.",
+            company: "Afrobeat Festival",
+            image: "https://i.pravatar.cc/150?img=9",
+            content: "The best platform for managing large-scale music festivals across the continent. Customer support is also top-notch.",
             rating: 5
         },
         {
             id: 4,
-            name: "David Ross",
+            name: "Chidi Nwosu",
             role: "Concert Promoter",
-            company: "Live Nation",
-            image: "https://randomuser.me/api/portraits/men/85.jpg",
-            content: "Incredible ease of use. Setting up an event takes minutes, and the ticket scanning is flawless.",
+            company: "Naija Live Events",
+            image: "https://i.pravatar.cc/150?img=13",
+            content: "Incredible ease of use. Setting up an event takes minutes, and the mobile ticket scanning works perfectly even with limited connectivity.",
             rating: 5
         },
         {
             id: 5,
-            name: "Emily White",
-            role: "Marketing Head",
-            company: "Creative Arts",
-            image: "https://randomuser.me/api/portraits/women/22.jpg",
-            content: "Our sales increased by 30% thanks to the built-in marketing tools. Highly recommended!",
-            rating: 4
+            name: "Thandiwe Moyo",
+            role: "Marketing Director",
+            company: "Joburg Arts Collective",
+            image: "https://i.pravatar.cc/150?img=10",
+            content: "Our ticket sales increased by 40% thanks to the built-in marketing tools and social media integration. Highly recommended!",
+            rating: 5
         }
     ];
 
