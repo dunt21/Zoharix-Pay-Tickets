@@ -1,0 +1,203 @@
+.security-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 800px;
+}
+
+.security-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.security-section:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-description {
+    color: var(--text-secondary, #a1a1aa);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Password Form */
+.password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+/* 2FA Section */
+.two-factor-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.two-factor-info {
+    flex: 1;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.enabled {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.disabled {
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Login History */
+.login-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.login-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.device-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.device-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary, #a1a1aa);
+    font-size: 1.2rem;
+}
+
+.device-details h4 {
+    font-size: 0.95rem;
+    color: var(--text-primary, #fff);
+    margin-bottom: 0.25rem;
+}
+
+.device-details p {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #a1a1aa);
+}
+
+.login-time {
+    text-align: right;
+}
+
+.login-date {
+    font-size: 0.85rem;
+    color: var(--text-primary, #fff);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.login-status {
+    font-size: 0.75rem;
+    color: #10B981;
+    /* Green for success */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .two-factor-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .login-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .login-time {
+        text-align: left;
+    }
+}
+
+/* Light Mode Overrides */
+[data-theme='light'] .security-section {
+    background: #ffffff;
+    border-color: #e4e4e7;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .section-title {
+    color: #18181b;
+}
+
+[data-theme='light'] .section-description {
+    color: #52525b;
+}
+
+[data-theme='light'] .login-item {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+[data-theme='light'] .device-icon {
+    background: #e2e8f0;
+    color: #64748b;
+}
+
+[data-theme='light'] .device-details h4 {
+    color: #1e293b;
+}
+
+[data-theme='light'] .login-date {
+    color: #334155;
+}
