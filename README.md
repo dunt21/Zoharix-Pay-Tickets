@@ -1,4 +1,4 @@
-# Zoharix Pay + Tickets
+# Z
 
 **Zoharix Pay + Tickets** is a unified event ticketing and business booking platform. It allows:
 
