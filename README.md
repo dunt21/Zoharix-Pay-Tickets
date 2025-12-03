@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/zoharix/Zoharix-Pay-Tickets.git
+   git clone https://github.com/zoharix/Zoharix-Pay-Ticket.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
