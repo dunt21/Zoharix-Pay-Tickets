@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/.git
+   git clone https://github.com/Z.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
