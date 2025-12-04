@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/Zoharix/Z-Even.git
+   git clone https://github.com/Zoharix/Z-Eventtgit
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
