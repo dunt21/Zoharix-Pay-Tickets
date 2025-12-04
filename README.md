@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/zoharix/Zoc.git
+   git clone https://github.com/zoharix/Zo.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
