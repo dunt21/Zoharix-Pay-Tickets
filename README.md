@@ -1,6 +1,6 @@
 # Z-Events
 
-**Zoharix Pay  Tce** is a unified event ticketing and business booking platform. It allows:
+**Zoharix Pay  Te** is a unified event ticketing and business booking platform. It allows:
 
 - Event organizers to create events, sell tickets, and track attendance.
 - Businesses (salons, barbers, trainers, restaurants, etc.) to host services, manage bookings, and accept payments.
