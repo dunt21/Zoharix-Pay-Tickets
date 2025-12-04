@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/Zoharix/Z-Ev.git
+   git clone https://github.com/Zoharix/Z-Eve.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
