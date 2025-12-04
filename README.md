@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/zoharix/Zoharix-PaTickt.git
+   git clone https://github.com/zoharix/Zoharix-PaTict.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
