@@ -1,4 +1,5 @@
-import React from "react";
+// import React, { useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -11,6 +12,8 @@ import { FaPlus } from "react-icons/fa";
 import { Button } from "../ui/button";
 
 const SignUp: React.FC = () => {
+  //   const [isNewUser, setIsNewUser] = useState(true);
+
   return (
     <div className="flex justify-center">
       <Card className="mt-10! p-5! w-full  lg:w-[50%]! bg-purple-500/80 text-white">
