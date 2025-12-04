@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/zoharix/Zohaix-Pict.git
+   git clone https://github.com/zoharix/Zohaix-Pct.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
