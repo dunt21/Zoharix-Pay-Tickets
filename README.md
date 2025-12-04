@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/Zo.git
+   git clone https://github.com/Zoh.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
