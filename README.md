@@ -30,7 +30,7 @@
 
 1. Clone the repository:
    ```
-   git clone https://github.com/Zoha.git
+   git clone https://github.com/Zohar.git
    ```
 3. Navigate to backend/frontend folders and install dependencies:
 
