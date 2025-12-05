@@ -1,0 +1,76 @@
+/* ============================================
+   SWITCH COMPONENT STYLES
+   ============================================ */
+
+.switch-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.switch-input {
+    display: none;
+}
+
+.switch-track {
+    width: 50px;
+    height: 26px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    position: relative;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.switch-input:checked+.switch-track {
+    background-color: rgba(139, 92, 246, 0.2);
+    /* Purple tint */
+    border-color: #8B5CF6;
+    /* Primary Purple */
+}
+
+.switch-thumb {
+    width: 18px;
+    height: 18px;
+    background-color: #a1a1aa;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.switch-input:checked+.switch-track .switch-thumb {
+    transform: translateX(24px);
+    background-color: #8B5CF6;
+    /* Primary Purple */
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.switch-label {
+    font-size: 0.95rem;
+    color: var(--text-secondary, #a1a1aa);
+    font-weight: 500;
+}
+
+/* Light Mode Support (via data-theme) */
+[data-theme='light'] .switch-track {
+    background-color: #e4e4e7;
+    border-color: #d4d4d8;
+}
+
+[data-theme='light'] .switch-input:checked+.switch-track {
+    background-color: rgba(139, 92, 246, 0.2);
+    border-color: #8B5CF6;
+}
+
+[data-theme='light'] .switch-thumb {
+    background-color: #71717a;
+}
+
+[data-theme='light'] .switch-input:checked+.switch-track .switch-thumb {
+    background-color: #8B5CF6;
+}
