@@ -1,0 +1,93 @@
+/* ============================================
+   FEATURES SECTION - BENTO GRID
+   ============================================ */
+
+.features {
+    padding: 6rem 5vw;
+    width: 100%;
+    background: var(--bg-secondary);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 220px;
+    /* Reduced from 280px */
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 3rem auto 0;
+    grid-auto-flow: dense;
+    /* Fills gaps automatically */
+}
+
+/* ============================================
+   GRID SPANS (Bento Layout)
+   ============================================ */
+
+/* Large Card (2x2) */
+.feature-large {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+/* Tall Card (1x2) */
+.feature-tall {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+/* Wide Card (2x1) */
+.feature-wide {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+/* Standard Card (1x1) */
+.feature-standard {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+/* ============================================
+   RESPONSIVE GRID
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 250px;
+        /* Slightly taller on tablet for content */
+    }
+
+    .feature-large,
+    .feature-wide {
+        grid-column: span 2;
+    }
+
+    .feature-tall {
+        grid-column: span 1;
+        grid-row: span 1;
+        /* Reset to standard height on tablet */
+    }
+}
+
+@media (max-width: 600px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+        /* Auto height for mobile */
+    }
+
+    .feature-large,
+    .feature-wide,
+    .feature-tall,
+    .feature-standard {
+        grid-column: span 1;
+        grid-row: auto;
+    }
+
+    .feature-card {
+        min-height: 250px;
+        /* Ensure minimum height on mobile */
+    }
+}
