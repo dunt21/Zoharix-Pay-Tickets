@@ -11,7 +11,7 @@ const Testimonials: React.FC = () => {
             role: "Event Organizer",
             company: "Lagos Tech Summit",
             image: "https://i.pravatar.cc/150?img=5",
-            content: "EventZ has completely transformed how we handle ticketing for our tech conferences across West Africa. The analytics are a game-changer!",
+            content: "Z-Events has completely transformed how we handle ticketing for our tech conferences across West Africa. The analytics are a game-changer!",
             rating: 5
         },
         {
@@ -56,10 +56,10 @@ const Testimonials: React.FC = () => {
     const allTestimonials = [...testimonials, ...testimonials];
 
     return (
-        <section className="testimonials">
+        <section id="testimonials" className="testimonials">
             <SectionHeader
                 title="Loved by Organizers"
-                subtitle="See what event professionals are saying about EventZ."
+                subtitle="See what event professionals are saying about Z-Events."
             />
 
             <div className="testimonials-marquee-container">

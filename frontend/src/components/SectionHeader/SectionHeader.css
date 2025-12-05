@@ -7,7 +7,11 @@
 }
 
 .section-header.centered {
-    text-align: center;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
 }
 
 .section-badge {

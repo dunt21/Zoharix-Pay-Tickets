@@ -14,7 +14,7 @@ const DashboardHome: React.FC = () => {
     <ThemeProvider>
       <div className="">
         <h1 className="text-2xl">Dashboard Overview</h1>
-        <p>Welcome to your EventZ command center.</p>
+        <p>Welcome to your Z-Events command center.</p>
       </div>
 
       <Stats />

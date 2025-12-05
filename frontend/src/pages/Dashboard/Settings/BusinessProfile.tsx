@@ -8,9 +8,9 @@ const BusinessProfile: React.FC = () => {
     const { success } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
-        businessName: 'EventZ Inc.',
+        businessName: 'Z-Events Inc.',
         taxId: 'US-123456789',
-        website: 'https://eventz.com',
+        website: 'https://z-events.com',
         address: '123 Event St, San Francisco, CA',
         description: 'Leading event management platform.',
     });

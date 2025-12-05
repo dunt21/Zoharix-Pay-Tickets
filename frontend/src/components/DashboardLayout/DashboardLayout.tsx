@@ -24,7 +24,7 @@ const DashboardLayout: React.FC = () => {
                     <button className="menu-toggle" onClick={toggleSidebar}>
                         <FaBars />
                     </button>
-                    <span className="mobile-title">EventZ</span>
+                    <span className="mobile-title">Z-Events</span>
                 </div>
 
                 <div className="dashboard-content">

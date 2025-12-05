@@ -41,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <div className="sidebar-header">
                     <div className="sidebar-logo">
                         <IoWalletOutline className="logo-icon" />
-                        <span className="logo-text">EventZ</span>
+                        <span className="logo-text">Z-Events</span>
                     </div>
                     <button className="close-btn" onClick={onClose}>
                         <FaTimes />

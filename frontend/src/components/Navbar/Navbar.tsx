@@ -36,12 +36,30 @@ const Navbar: React.FC = () => {
         setIsMobileMenuOpen(false);
     };
 
+    const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+        e.preventDefault();
+        const element = document.getElementById(id);
+        if (element) {
+            const offset = 80;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+        closeMobileMenu();
+    };
+
     return (
         <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
             <div className="nav-container">
                 <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                     <IoWalletOutline className="logo-icon" />
-                    <span className="logo-text">EventZ</span>
+                    <span className="logo-text">Z-Events</span>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -55,10 +73,10 @@ const Navbar: React.FC = () => {
 
                 {/* Navigation Links */}
                 <ul className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-                    <li><a href="#features" onClick={closeMobileMenu}>Features</a></li>
-                    <li><a href="#how-it-works" onClick={closeMobileMenu}>How it Works</a></li>
-                    <li><a href="#pricing" onClick={closeMobileMenu}>Pricing</a></li>
-                    <li><a href="#testimonials" onClick={closeMobileMenu}>Testimonials</a></li>
+                    <li><a href="#features" onClick={(e) => scrollToSection(e, 'features')}>Features</a></li>
+                    <li><a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>How it Works</a></li>
+                    <li><a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')}>Pricing</a></li>
+                    <li><a href="#testimonials" onClick={(e) => scrollToSection(e, 'testimonials')}>Testimonials</a></li>
                     <li><ThemeToggle /></li>
                     <li>
                         <Link to="/signup" style={{ textDecoration: 'none' }}>
