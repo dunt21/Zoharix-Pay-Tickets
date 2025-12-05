@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
@@ -7,6 +7,7 @@ import { useToast } from '../../context/ToastContext';
 import './Auth.css';
 
 const Login: React.FC = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -36,6 +37,7 @@ const Login: React.FC = () => {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             success('Login successful! Redirecting...');
+            navigate('/dashboard');
         } catch (err) {
             error('Login failed. Please check your credentials.');
         } finally {
