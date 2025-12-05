@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaGoogle, FaGithub, FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaGoogle, FaUser, FaEnvelope } from 'react-icons/fa';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
@@ -149,7 +149,7 @@ const SignUp: React.FC = () => {
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     }
-                    interactiveIcon={true}
+
                     required
                     fullWidth
                 />
@@ -170,7 +170,7 @@ const SignUp: React.FC = () => {
                             {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     }
-                    interactiveIcon={true}
+
                     required
                     fullWidth
                 />
@@ -212,15 +212,7 @@ const SignUp: React.FC = () => {
                     Google
                 </Button>
 
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="btn-social full-width"
-                    onClick={() => handleSocialLogin('github')}
-                    icon={<FaGithub />}
-                >
-                    GitHub
-                </Button>
+
             </div>
 
             <p className="auth-footer-text">

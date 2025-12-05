@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaGoogle, FaGithub } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
@@ -83,7 +83,7 @@ const Login: React.FC = () => {
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     }
-                    interactiveIcon={true}
+
                     required
                     fullWidth
                 />
@@ -129,15 +129,7 @@ const Login: React.FC = () => {
                     Google
                 </Button>
 
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="btn-social full-width"
-                    onClick={() => handleSocialLogin('github')}
-                    icon={<FaGithub />}
-                >
-                    GitHub
-                </Button>
+
             </div>
 
             <p className="auth-footer-text">
