@@ -9,8 +9,7 @@ import {
     Smartphone,
     Download,
     Trash2,
-    TrendingUp,
-    DollarSign
+    TrendingUp
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
