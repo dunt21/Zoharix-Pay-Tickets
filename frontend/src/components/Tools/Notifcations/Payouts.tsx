@@ -37,49 +37,40 @@ const payouts = [
 
 const Payouts: React.FC = () => {
   return (
-    <>
-      <p className="mt-8! mb-6! text-lg font-semibold">Payouts</p>
-
-      <ul className="space-y-4!">
+    <Card style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg">Payouts</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
         {payouts.map((p) => (
-          <li className="p-5! lg:px-24!" key={p.id}>
-            <Card className="px-4! py-5! ">
-              <CardHeader>
-                <div className="flex justify-between">
-                  <div className="flex gap-2 items-center">
-                    <FaWallet size={14} />
-                    <CardTitle>${p.amount}</CardTitle>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="px-1! py-0.5!  bg-purple-500 text-white"
-                  >
-                    {p.status}
-                  </Badge>
-                </div>
-
-                <CardDescription>{p.source} </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-2">
-                <div className="w-full border-t-2"></div>
-
-                <div className="flex gap-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaCheck />
-                    <span>{p.transactionId}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaCalendar />
-                    <span>{p.date}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </li>
+          <div key={p.id} className="p-3 rounded-lg" style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex gap-2 items-center">
+                <FaWallet size={14} className="text-green-500" />
+                <p className="font-bold text-base">${p.amount}</p>
+              </div>
+              <Badge
+                variant="outline"
+                className="bg-purple-500 text-white border-purple-500 text-xs"
+              >
+                {p.status}
+              </Badge>
+            </div>
+            <CardDescription className="text-sm mb-2">{p.source}</CardDescription>
+            <div className="flex gap-3 text-xs text-muted-foreground pt-2 border-t border-white/5">
+              <div className="flex items-center gap-1">
+                <FaCheck />
+                <span>{p.transactionId}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaCalendar />
+                <span>{p.date}</span>
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 

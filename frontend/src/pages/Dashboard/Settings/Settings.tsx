@@ -7,12 +7,12 @@ import {
     FaBell,
     FaShieldAlt
 } from 'react-icons/fa';
-import ProfileDetails from './Settings/ProfileDetails';
-import BusinessProfile from './Settings/BusinessProfile';
-import OrganizerVerification from './Settings/OrganizerVerification';
-import PaymentInfo from './Settings/PaymentInfo';
-import NotificationPreferences from './Settings/NotificationPreferences';
-import Security from './Settings/Security';
+import ProfileDetails from './ProfileDetails';
+import BusinessProfile from './BusinessProfile';
+import OrganizerVerification from './OrganizerVerification';
+import PaymentInfo from './PaymentInfo';
+import NotificationPreferences from './NotificationPreferences';
+import Security from './Security';
 import './Settings.css';
 
 type SettingsTab = 'profile' | 'business' | 'verification' | 'payment' | 'notifications' | 'security';

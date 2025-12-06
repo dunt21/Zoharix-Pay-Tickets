@@ -31,38 +31,30 @@ const upcomingEvents = [
 
 const UpcomingEvents: React.FC = () => {
   return (
-    <>
-      <p className="mt-8! mb-6! text-lg font-semibold">Recent Bookings</p>
-
-      <ul className="space-y-4!">
-        {upcomingEvents.map((ev) => (
-          <li className="p-5! lg:px-24!" key={ev.id}>
-            <Card className="px-4! py-5! ">
-              <CardHeader>
-                <CardTitle>{ev.title}</CardTitle>
-                <CardDescription>{ev.theme} </CardDescription>
-              </CardHeader>
-              <CardContent className="flex gap-4">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaUser />
-                  <span>{ev.attendees}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaClock />
-                  <span>{ev.time}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaMapLocation />
-                  <span>{ev.location}</span>
-                </div>
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
-    </>
+    <div className="space-y-3">
+      {upcomingEvents.map((ev) => (
+        <Card key={ev.id} style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">{ev.title}</CardTitle>
+            <CardDescription className="text-sm">{ev.theme}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <FaUser />
+              <span>{ev.attendees}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaClock />
+              <span>{ev.time}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaMapLocation />
+              <span>{ev.location}</span>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };
 

@@ -1,5 +1,4 @@
 import React from "react";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaCalendar, FaClock } from "react-icons/fa";
 import { FaNoteSticky } from "react-icons/fa6";
@@ -36,43 +35,35 @@ const reminders = [
 
 const Reminders: React.FC = () => {
   return (
-    <>
-      <p className="mt-8! mb-6! text-lg font-semibold">Reminders</p>
-
-      <ul className="space-y-4!">
+    <Card style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg">Reminders</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
         {reminders.map((r) => (
-          <li className="p-5! lg:px-24!" key={r.id}>
-            <Card className="px-4! py-5! border-l-4 border-l-purple-500 ">
-              <CardHeader className="">
-                <div className="flex items-center gap-2 flex-1">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
-                  <div>
-                    <CardTitle>{r.title}</CardTitle>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="flex gap-4">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaNoteSticky />
-                  <span>{r.type}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaCalendar />
-                  <span>{r.date}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FaClock />
-                  <span>{r.time}</span>
-                </div>
-              </CardContent>
-            </Card>
-          </li>
+          <div key={r.id} className="p-3 rounded-lg border-l-4 border-l-purple-500" style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', borderLeft: '4px solid #a855f7' }}>
+            <div className="flex items-start gap-2 mb-2">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
+              <p className="font-medium text-sm">{r.title}</p>
+            </div>
+            <div className="flex gap-3 text-xs text-muted-foreground ml-4">
+              <div className="flex items-center gap-1">
+                <FaNoteSticky />
+                <span>{r.type}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaCalendar />
+                <span>{r.date}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaClock />
+                <span>{r.time}</span>
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 

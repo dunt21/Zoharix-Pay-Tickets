@@ -4,12 +4,12 @@ import AuthLayout from './components/AuthLayout/AuthLayout';
 import SignUp from './pages/Auth/SignUp';
 import Login from './pages/Auth/Login';
 import DashboardLayout from './components/DashboardLayout/DashboardLayout';
-import DashboardHome from './pages/Dashboard/DashboardHome';
-import EventsServices from './pages/Dashboard/EventsServices';
-import TicketsBookings from './pages/Dashboard/TicketsBookings';
-import Wallet from './pages/Dashboard/Wallet';
-import Analytics from './pages/Dashboard/Analytics';
-import Settings from './pages/Dashboard/Settings';
+import DashboardHome from './pages/Dashboard/Home/DashboardHome';
+import EventsServices from './pages/Dashboard/Services/EventsServices';
+import TicketsBookings from './pages/Dashboard/Bookings/TicketsBookings';
+import Wallet from './pages/Dashboard/Wallet/Wallet';
+import Analytics from './pages/Dashboard/Analytics/Analytics';
+import Settings from './pages/Dashboard/Settings/Settings';
 import Verification from './pages/Auth/Verification';
 
 function App() {
