@@ -9,6 +9,14 @@ import { serverConfig } from './config/server';
 import { corsOptions } from './config/cors';
 import { rateLimitConfig } from './config/rateLimit';
 
+// Import routes
+import authRoutes from './routes/authRoutes';
+import userRoutes from './routes/userRoutes';
+import eventRoutes from './routes/eventRoutes';
+import ticketRoutes from './routes/ticketRoutes';
+import paymentRoutes from './routes/paymentRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
+
 // Connect to database
 connectDB();
 
@@ -21,14 +29,13 @@ app.set('trust proxy', 1);
 // CORS middleware
 app.use(cors(corsOptions));
 
+// Define API Prefix
+const apiPrefix = `/api/${serverConfig.apiVersion}`;
+
 // Rate limiting
-app.use('/api/', rateLimit(rateLimitConfig.general));
-
-// Auth rate limiting
-app.use('/api/auth/', rateLimit(rateLimitConfig.auth));
-
-// Payment rate limiting
-app.use('/api/payment/', rateLimit(rateLimitConfig.payment));
+app.use(apiPrefix, rateLimit(rateLimitConfig.general));
+app.use(`${apiPrefix}/auth`, rateLimit(rateLimitConfig.auth));
+app.use(`${apiPrefix}/payments`, rateLimit(rateLimitConfig.payment));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -45,13 +52,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API routes prefix
-app.use(`/api/${serverConfig.apiVersion}`, (req, res) => {
-  res.status(200).json({
-    message: 'API is working',
-    version: serverConfig.apiVersion
-  });
-});
+// API Routes
+app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/users`, userRoutes);
+app.use(`${apiPrefix}/events`, eventRoutes);
+app.use(`${apiPrefix}/tickets`, ticketRoutes);
+app.use(`${apiPrefix}/payments`, paymentRoutes);
+app.use(`${apiPrefix}/dashboard`, dashboardRoutes);
 
 // 404 handler
 app.use((req, res) => {

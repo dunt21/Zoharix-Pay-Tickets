@@ -1,8 +1,8 @@
 export declare const authConfig: {
-    jwtSecret: string;
-    jwtExpiresIn: string;
-    bcryptRounds: number;
-    refreshTokenSecret: string;
-    refreshTokenExpiresIn: string;
+    readonly jwtSecret: string;
+    readonly jwtExpiresIn: string;
+    readonly bcryptRounds: number;
+    readonly refreshTokenSecret: string;
+    readonly refreshTokenExpiresIn: string;
 };
 //# sourceMappingURL=auth.d.ts.map

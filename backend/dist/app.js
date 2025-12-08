@@ -11,13 +11,20 @@ const database_1 = __importDefault(require("./config/database"));
 const server_1 = require("./config/server");
 const cors_2 = require("./config/cors");
 const rateLimit_1 = require("./config/rateLimit");
+const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
+const ticketRoutes_1 = __importDefault(require("./routes/ticketRoutes"));
+const paymentRoutes_1 = __importDefault(require("./routes/paymentRoutes"));
+const dashboardRoutes_1 = __importDefault(require("./routes/dashboardRoutes"));
 (0, database_1.default)();
 const app = (0, express_1.default)();
 app.set('trust proxy', 1);
 app.use((0, cors_1.default)(cors_2.corsOptions));
-app.use('/api/', (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.general));
-app.use('/api/auth/', (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.auth));
-app.use('/api/payment/', (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.payment));
+const apiPrefix = `/api/${server_1.serverConfig.apiVersion}`;
+app.use(apiPrefix, (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.general));
+app.use(`${apiPrefix}/auth`, (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.auth));
+app.use(`${apiPrefix}/payments`, (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.payment));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/api/health', (req, res) => {
@@ -29,13 +36,13 @@ app.get('/api/health', (req, res) => {
         version: server_1.serverConfig.apiVersion
     });
 });
-app.use(`/api/${server_1.serverConfig.apiVersion}`, (req, res) => {
-    res.status(200).json({
-        message: 'API is working',
-        version: server_1.serverConfig.apiVersion
-    });
-});
-app.use('*', (req, res) => {
+app.use(`${apiPrefix}/auth`, authRoutes_1.default);
+app.use(`${apiPrefix}/users`, userRoutes_1.default);
+app.use(`${apiPrefix}/events`, eventRoutes_1.default);
+app.use(`${apiPrefix}/tickets`, ticketRoutes_1.default);
+app.use(`${apiPrefix}/payments`, paymentRoutes_1.default);
+app.use(`${apiPrefix}/dashboard`, dashboardRoutes_1.default);
+app.use((req, res) => {
     res.status(404).json({
         error: 'Route not found',
         path: req.originalUrl,
