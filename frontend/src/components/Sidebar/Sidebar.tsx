@@ -51,10 +51,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <div className="sidebar-content">
                     <div className="user-profile-summary">
                         <div className="user-avatar">
-                            <span>JD</span>
+                            <span>ZT</span>
                         </div>
                         <div className="user-info">
-                            <span className="user-name">John Doe</span>
+                            <span className="user-name">Zoharix Tech</span>
                             <span className="user-role">Organizer</span>
                         </div>
                     </div>

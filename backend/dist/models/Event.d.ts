@@ -3,7 +3,19 @@ export interface IEvent extends Document {
     title: string;
     description: string;
     date: Date;
+<<<<<<< HEAD
     location: string;
+=======
+    location: {
+        address: string;
+        city: string;
+        country: string;
+        coordinates?: {
+            lat: number;
+            lng: number;
+        };
+    };
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     organizer: mongoose.Types.ObjectId;
     category: string;
     imageUrl?: string;

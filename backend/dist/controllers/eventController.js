@@ -33,7 +33,11 @@ const getEvents = async (req, res, next) => {
         if (search)
             query = { title: { $regex: search, $options: 'i' } };
         const events = await Event_1.default.find(query)
+<<<<<<< HEAD
             .populate('organizer', 'firstName lastName email')
+=======
+            .populate('organizer', 'name')
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
             .limit(Number(limit))
             .skip((Number(page) - 1) * Number(limit));
         res.status(200).json({

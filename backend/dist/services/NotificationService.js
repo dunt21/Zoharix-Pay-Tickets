@@ -1,4 +1,5 @@
 "use strict";
+<<<<<<< HEAD
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -32,6 +33,8 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+=======
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
 Object.defineProperty(exports, "__esModule", { value: true });
 class NotificationService {
     constructor(emailService) {
@@ -70,6 +73,7 @@ class NotificationService {
         await this.emailService.sendEmail(email, subject, htmlContent);
     }
     async sendInAppNotification(data) {
+<<<<<<< HEAD
         try {
             const Notification = (await Promise.resolve().then(() => __importStar(require('../models/Notification')))).default;
             const notification = new Notification({
@@ -94,6 +98,12 @@ class NotificationService {
             message: data.message,
             data: data.data
         });
+=======
+        console.log('Sending in-app notification:', data);
+    }
+    async sendPushNotification(data) {
+        console.log('Sending push notification:', data);
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     }
     getEmailTemplate(template, data) {
         switch (template) {
@@ -161,6 +171,7 @@ class NotificationService {
         }
     }
     async sendBulkNotification(userIds, data) {
+<<<<<<< HEAD
         try {
             const promises = userIds.map(userId => this.sendNotification({ ...data, userId }));
             await Promise.all(promises);
@@ -211,6 +222,15 @@ class NotificationService {
             console.error('Failed to send marketing email:', error);
             throw new Error('Failed to send marketing email');
         }
+=======
+        console.log(`Sending bulk notification to ${userIds.length} users:`, data);
+    }
+    async sendEventReminder(eventId, userIds) {
+        console.log(`Sending event reminders for event ${eventId} to ${userIds.length} users`);
+    }
+    async sendMarketingEmail(email, campaignId, content) {
+        console.log(`Sending marketing email to ${email} for campaign ${campaignId}`);
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     }
 }
 exports.default = NotificationService;

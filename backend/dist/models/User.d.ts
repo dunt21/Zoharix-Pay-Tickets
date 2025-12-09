@@ -2,8 +2,12 @@ import mongoose, { Document } from 'mongoose';
 export interface IUser extends Document {
     email: string;
     password: string;
+<<<<<<< HEAD
     firstName: string;
     lastName: string;
+=======
+    name: string;
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     isVerified: boolean;
     role: 'user' | 'organizer' | 'admin';
     profileImage?: string;

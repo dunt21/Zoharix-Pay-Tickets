@@ -78,7 +78,7 @@ const DashboardHome: React.FC = () => {
             Dashboard
           </h1>
           <p className="dashboard-subtitle">
-            Welcome back, <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Alinco Tech</span>. You have 3 pending tasks.
+            Welcome back, <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Zoharix Tech</span>. You have 3 pending tasks.
           </p>
         </div>
         <div className="header-actions">

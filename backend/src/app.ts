@@ -29,16 +29,15 @@ app.set('trust proxy', 1);
 // CORS middleware
 app.use(cors(corsOptions));
 
+// Define API Prefix
+const apiPrefix = `/api/${serverConfig.apiVersion}`;
+
 // Rate limiting
-app.use('/api/', rateLimit(rateLimitConfig.general));
+app.use(apiPrefix, rateLimit(rateLimitConfig.general));
+app.use(`${apiPrefix}/auth`, rateLimit(rateLimitConfig.auth));
+app.use(`${apiPrefix}/payments`, rateLimit(rateLimitConfig.payment));
 
-// Auth rate limiting
-app.use('/api/auth/', rateLimit(rateLimitConfig.auth));
-
-// Payment rate limiting
-app.use('/api/payment/', rateLimit(rateLimitConfig.payment));
-
-// Body parsing middleware
+// Body parsing middleware - MUST come before routes
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -54,18 +53,26 @@ app.get('/api/health', (req, res) => {
 });
 
 // API routes
-app.use(`/api/${serverConfig.apiVersion}/auth`, authRoutes);
-app.use(`/api/${serverConfig.apiVersion}/events`, eventRoutes);
-app.use(`/api/${serverConfig.apiVersion}/users`, userRoutes);
-app.use(`/api/${serverConfig.apiVersion}/tickets`, ticketRoutes);
-app.use(`/api/${serverConfig.apiVersion}/payments`, paymentRoutes);
-app.use(`/api/${serverConfig.apiVersion}/dashboard`, dashboardRoutes);
+app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/events`, eventRoutes);
+app.use(`${apiPrefix}/users`, userRoutes);
+app.use(`${apiPrefix}/tickets`, ticketRoutes);
+app.use(`${apiPrefix}/payments`, paymentRoutes);
+app.use(`${apiPrefix}/dashboard`, dashboardRoutes);
 
 // API root endpoint
-app.get(`/api/${serverConfig.apiVersion}`, (req, res) => {
+app.get(apiPrefix, (req, res) => {
   res.status(200).json({
     message: 'API is working',
-    version: serverConfig.apiVersion
+    version: serverConfig.apiVersion,
+    endpoints: {
+      auth: `${apiPrefix}/auth`,
+      events: `${apiPrefix}/events`,
+      users: `${apiPrefix}/users`,
+      tickets: `${apiPrefix}/tickets`,
+      payments: `${apiPrefix}/payments`,
+      dashboard: `${apiPrefix}/dashboard`
+    }
   });
 });
 

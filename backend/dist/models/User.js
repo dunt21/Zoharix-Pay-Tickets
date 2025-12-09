@@ -46,12 +46,16 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+<<<<<<< HEAD
     firstName: {
         type: String,
         required: true,
         trim: true
     },
     lastName: {
+=======
+    name: {
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
         type: String,
         required: true,
         trim: true

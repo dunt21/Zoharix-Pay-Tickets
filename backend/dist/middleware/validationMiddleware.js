@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+<<<<<<< HEAD
 exports.validatePayment = exports.validateTicketBooking = exports.validatePagination = exports.validateUserId = exports.validateEventId = exports.validateEventCreation = exports.validateLogin = exports.validateSignup = exports.handleValidationErrors = exports.logSchemaValidation = void 0;
 const logSchemaValidation = (req, res, next) => {
     const { body } = req;
@@ -34,6 +35,9 @@ const logSchemaValidation = (req, res, next) => {
     next();
 };
 exports.logSchemaValidation = logSchemaValidation;
+=======
+exports.validatePayment = exports.validateTicketBooking = exports.validatePagination = exports.validateUserId = exports.validateEventId = exports.validateEventCreation = exports.validateLogin = exports.validateSignup = exports.handleValidationErrors = void 0;
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
 const validators = {
     isEmail: (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -76,18 +80,27 @@ const handleValidationErrors = (req, res, next) => {
 exports.handleValidationErrors = handleValidationErrors;
 const validateSignup = (req, res, next) => {
     const errors = [];
+<<<<<<< HEAD
     const { email, password, firstName, lastName } = req.body;
+=======
+    const { email, password, name } = req.body;
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     if (!validators.isNotEmpty(email) || !validators.isEmail(email)) {
         errors.push({ field: 'email', message: 'Please provide a valid email' });
     }
     if (!validators.isNotEmpty(password) || !validators.isLength(password, 6)) {
         errors.push({ field: 'password', message: 'Password must be at least 6 characters long' });
     }
+<<<<<<< HEAD
     if (!validators.isNotEmpty(firstName) || !validators.isLength(firstName, 2, 50)) {
         errors.push({ field: 'firstName', message: 'First name must be between 2 and 50 characters' });
     }
     if (!validators.isNotEmpty(lastName) || !validators.isLength(lastName, 2, 50)) {
         errors.push({ field: 'lastName', message: 'Last name must be between 2 and 50 characters' });
+=======
+    if (!validators.isNotEmpty(name) || !validators.isLength(name, 2, 50)) {
+        errors.push({ field: 'name', message: 'Name must be between 2 and 50 characters' });
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     }
     req.validationErrors = errors;
     next();

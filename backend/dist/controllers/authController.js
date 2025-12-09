@@ -27,7 +27,11 @@ const login = async (req, res, next) => {
             message: 'Login successful',
             token,
             refreshToken,
+<<<<<<< HEAD
             user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role }
+=======
+            user: { id: user._id, email: user.email, name: user.name, role: user.role }
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
         });
     }
     catch (error) {
@@ -37,18 +41,30 @@ const login = async (req, res, next) => {
 exports.login = login;
 const signup = async (req, res, next) => {
     try {
+<<<<<<< HEAD
         const { email, password, firstName, lastName } = req.body;
+=======
+        const { email, password, name } = req.body;
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
         const existingUser = await User_1.default.findOne({ email });
         if (existingUser) {
             res.status(400).json({ message: 'User already exists' });
             return;
         }
         const hashedPassword = await bcryptjs_1.default.hash(password, auth_1.authConfig.bcryptRounds);
+<<<<<<< HEAD
         const user = new User_1.default({ email, password: hashedPassword, firstName, lastName });
         await user.save();
         res.status(201).json({
             message: 'User created successfully',
             user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName }
+=======
+        const user = new User_1.default({ email, password: hashedPassword, name });
+        await user.save();
+        res.status(201).json({
+            message: 'User created successfully',
+            user: { id: user._id, email: user.email, name: user.name }
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
         });
     }
     catch (error) {

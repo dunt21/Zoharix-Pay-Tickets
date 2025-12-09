@@ -12,8 +12,13 @@ const server_1 = require("./config/server");
 const cors_2 = require("./config/cors");
 const rateLimit_1 = require("./config/rateLimit");
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+<<<<<<< HEAD
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+=======
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
 const ticketRoutes_1 = __importDefault(require("./routes/ticketRoutes"));
 const paymentRoutes_1 = __importDefault(require("./routes/paymentRoutes"));
 const dashboardRoutes_1 = __importDefault(require("./routes/dashboardRoutes"));
@@ -21,9 +26,10 @@ const dashboardRoutes_1 = __importDefault(require("./routes/dashboardRoutes"));
 const app = (0, express_1.default)();
 app.set('trust proxy', 1);
 app.use((0, cors_1.default)(cors_2.corsOptions));
-app.use('/api/', (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.general));
-app.use('/api/auth/', (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.auth));
-app.use('/api/payment/', (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.payment));
+const apiPrefix = `/api/${server_1.serverConfig.apiVersion}`;
+app.use(apiPrefix, (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.general));
+app.use(`${apiPrefix}/auth`, (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.auth));
+app.use(`${apiPrefix}/payments`, (0, express_rate_limit_1.default)(rateLimit_1.rateLimitConfig.payment));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/api/health', (req, res) => {
@@ -35,6 +41,7 @@ app.get('/api/health', (req, res) => {
         version: server_1.serverConfig.apiVersion
     });
 });
+<<<<<<< HEAD
 app.use(`/api/${server_1.serverConfig.apiVersion}/auth`, authRoutes_1.default);
 app.use(`/api/${server_1.serverConfig.apiVersion}/events`, eventRoutes_1.default);
 app.use(`/api/${server_1.serverConfig.apiVersion}/users`, userRoutes_1.default);
@@ -47,6 +54,14 @@ app.get(`/api/${server_1.serverConfig.apiVersion}`, (req, res) => {
         version: server_1.serverConfig.apiVersion
     });
 });
+=======
+app.use(`${apiPrefix}/auth`, authRoutes_1.default);
+app.use(`${apiPrefix}/users`, userRoutes_1.default);
+app.use(`${apiPrefix}/events`, eventRoutes_1.default);
+app.use(`${apiPrefix}/tickets`, ticketRoutes_1.default);
+app.use(`${apiPrefix}/payments`, paymentRoutes_1.default);
+app.use(`${apiPrefix}/dashboard`, dashboardRoutes_1.default);
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
 app.use((req, res) => {
     res.status(404).json({
         error: 'Route not found',

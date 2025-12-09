@@ -19,7 +19,11 @@ declare class EventService {
     checkEventAvailability(eventId: string, ticketType: string, quantity: number): Promise<boolean>;
     getOrganizerStats(organizerId: string): Promise<EventStats>;
     getUpcomingEvents(limit?: number): Promise<any[]>;
+<<<<<<< HEAD
     updateEventStatus(eventId: string, status: 'draft' | 'published' | 'cancelled' | 'completed'): Promise<void>;
+=======
+    updateEventStatus(eventId: string, status: 'active' | 'cancelled' | 'completed'): Promise<void>;
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     getEventsByLocation(location: string, radius?: number): Promise<any[]>;
     getTrendingEvents(limit?: number): Promise<any[]>;
 }

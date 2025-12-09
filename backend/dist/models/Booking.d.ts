@@ -1,10 +1,15 @@
 import mongoose, { Document } from 'mongoose';
 export interface IBooking extends Document {
     user: mongoose.Types.ObjectId;
+<<<<<<< HEAD
     event?: mongoose.Types.ObjectId;
     service?: mongoose.Types.ObjectId;
     type: 'event' | 'service';
     tickets?: {
+=======
+    event: mongoose.Types.ObjectId;
+    tickets: {
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
         type: string;
         quantity: number;
         price: number;

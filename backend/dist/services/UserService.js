@@ -15,8 +15,12 @@ class UserService {
                 return null;
             return {
                 id: user._id.toString(),
+<<<<<<< HEAD
                 firstName: user.firstName,
                 lastName: user.lastName,
+=======
+                name: user.name,
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
                 email: user.email,
                 role: user.role,
                 isVerified: user.isVerified,
@@ -41,7 +45,11 @@ class UserService {
     async updateUserProfile(userId, updates) {
         try {
             const allowedUpdates = [
+<<<<<<< HEAD
                 'firstName', 'lastName', 'profileImage', 'phone'
+=======
+                'name', 'profileImage', 'phone'
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
             ];
             const filteredUpdates = {};
             Object.keys(updates).forEach(key => {
@@ -55,8 +63,12 @@ class UserService {
             }
             return {
                 id: user._id.toString(),
+<<<<<<< HEAD
                 firstName: user.firstName,
                 lastName: user.lastName,
+=======
+                name: user.name,
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
                 email: user.email,
                 role: user.role,
                 isVerified: user.isVerified,

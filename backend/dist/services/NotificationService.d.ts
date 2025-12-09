@@ -1,10 +1,17 @@
 import EmailService from './EmailService';
 interface NotificationData {
     userId: string;
+<<<<<<< HEAD
     type: 'email' | 'in_app' | 'push' | 'event_reminder' | 'marketing' | 'system';
     title: string;
     message: string;
     data?: Record<string, any>;
+=======
+    type: 'email' | 'in_app' | 'push';
+    title: string;
+    message: string;
+    metadata?: Record<string, any>;
+>>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
 }
 declare class NotificationService {
     private emailService;
