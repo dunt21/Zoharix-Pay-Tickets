@@ -20,7 +20,7 @@ interface EventStats {
 }
 
 class EventService {
-  async getEventsWithFilters(filters: EventSearchFilters, page: number = 1, limit: number = 10): Promise<any> {
+  async getEventsWithFilters(filters: EventSearchFilters, page: number = 1, limit: number = 10): Promise<PaginatedEvents> {
     try {
       const query: any = {};
 
@@ -41,7 +41,7 @@ class EventService {
       }
 
       const events = await Event.find(query)
-        .populate('organizer', 'name email')
+        .populate('organizer', 'firstName lastName email')
         .sort({ date: 1 })
         .limit(limit)
         .skip((page - 1) * limit);
@@ -71,7 +71,7 @@ class EventService {
       }
 
       const bookings = await Booking.find({ event: eventId })
-        .populate('user', 'name email')
+        .populate('user', 'firstName lastName email')
         .sort({ createdAt: -1 });
 
       const totalBookings = bookings.length;
@@ -81,11 +81,11 @@ class EventService {
       // Ticket type breakdown
       const ticketBreakdown = event.ticketTypes.map(ticketType => {
         const bookingsForType = bookings.filter(booking =>
-          booking.tickets.some(ticket => ticket.type === ticketType.name)
+          booking.tickets && booking.tickets.some(ticket => ticket.type === ticketType.name)
         );
 
         const quantitySold = bookingsForType.reduce((sum, booking) => {
-          const ticket = booking.tickets.find(t => t.type === ticketType.name);
+          const ticket = booking.tickets && booking.tickets.find(t => t.type === ticketType.name);
           return sum + (ticket ? ticket.quantity : 0);
         }, 0);
 
@@ -180,9 +180,9 @@ class EventService {
       const now = new Date();
       const events = await Event.find({
         date: { $gte: now },
-        status: 'active'
+        status: 'published'
       })
-        .populate('organizer', 'name')
+        .populate('organizer', 'firstName lastName')
         .sort({ date: 1 })
         .limit(limit);
 
@@ -193,7 +193,7 @@ class EventService {
     }
   }
 
-  async updateEventStatus(eventId: string, status: 'active' | 'cancelled' | 'completed'): Promise<void> {
+  async updateEventStatus(eventId: string, status: 'draft' | 'published' | 'cancelled' | 'completed'): Promise<void> {
     try {
       await Event.findByIdAndUpdate(eventId, { status });
 
@@ -259,7 +259,7 @@ class EventService {
 
       return trendingEvents.map(item => ({
         ...item.event,
-        organizer: { name: item.organizer.name },
+        organizer: { firstName: item.organizer.firstName, lastName: item.organizer.lastName },
         trendingScore: item.bookingCount
       }));
     } catch (error) {

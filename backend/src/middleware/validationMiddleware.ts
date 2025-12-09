@@ -1,4 +1,40 @@
+// Schema validation logging middleware
 import { Request, Response, NextFunction } from 'express';
+
+// Simple console logging for schema validation
+export const logSchemaValidation = (req: Request, res: Response, next: NextFunction) => {
+  const { body } = req;
+  const route = req.originalUrl;
+
+  // Log potential schema mismatches
+  if (route.includes('/auth/signup') && body) {
+    if (body.firstName && body.lastName && !body.name) {
+      console.log('Schema validation: Signup using firstName/lastName fields correctly');
+    } else if (body.name) {
+      console.warn('Schema mismatch: Signup still using single name field instead of firstName/lastName');
+    }
+  }
+
+  if (route.includes('/events') && body?.location) {
+    if (typeof body.location === 'string') {
+      console.log('Schema validation: Event location is string as expected');
+    } else if (typeof body.location === 'object') {
+      console.warn('Schema mismatch: Event location is object instead of string');
+    }
+  }
+
+  if (route.includes('/bookings') && body) {
+    if (body.type === 'service' && body.service && !body.event) {
+      console.log('Schema validation: Service booking correctly structured');
+    } else if (body.type === 'event' && body.event && !body.service) {
+      console.log('Schema validation: Event booking correctly structured');
+    } else {
+      console.warn('Schema mismatch: Booking type and references do not match');
+    }
+  }
+
+  next();
+};
 
 interface ValidationError {
   field: string;
@@ -62,7 +98,7 @@ export const handleValidationErrors = (req: Request, res: Response, next: NextFu
  */
 export const validateSignup = (req: Request, res: Response, next: NextFunction): void => {
   const errors: ValidationError[] = [];
-  const { email, password, name } = req.body;
+  const { email, password, firstName, lastName } = req.body;
 
   if (!validators.isNotEmpty(email) || !validators.isEmail(email)) {
     errors.push({ field: 'email', message: 'Please provide a valid email' });
@@ -72,8 +108,12 @@ export const validateSignup = (req: Request, res: Response, next: NextFunction):
     errors.push({ field: 'password', message: 'Password must be at least 6 characters long' });
   }
 
-  if (!validators.isNotEmpty(name) || !validators.isLength(name, 2, 50)) {
-    errors.push({ field: 'name', message: 'Name must be between 2 and 50 characters' });
+  if (!validators.isNotEmpty(firstName) || !validators.isLength(firstName, 2, 50)) {
+    errors.push({ field: 'firstName', message: 'First name must be between 2 and 50 characters' });
+  }
+
+  if (!validators.isNotEmpty(lastName) || !validators.isLength(lastName, 2, 50)) {
+    errors.push({ field: 'lastName', message: 'Last name must be between 2 and 50 characters' });
   }
 
   (req as any).validationErrors = errors;

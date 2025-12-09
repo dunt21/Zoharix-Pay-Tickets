@@ -43,6 +43,20 @@
     pointer-events: none;
 }
 
+.input-right-icon {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.input-right-icon:hover {
+    color: var(--text-secondary);
+}
+
 .input-field {
     width: 100%;
     padding: 0.875rem 1rem;
@@ -56,6 +70,10 @@
 
 .input-field.with-icon {
     padding-left: 3rem;
+}
+
+.input-field.with-right-icon {
+    padding-right: 3rem;
 }
 
 .input-field::placeholder {

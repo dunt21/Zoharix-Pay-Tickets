@@ -4,6 +4,7 @@ import './Input.css';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     icon?: ReactNode;
+    rightIcon?: ReactNode;
     error?: string;
     fullWidth?: boolean;
 }
@@ -11,6 +12,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 const Input: React.FC<InputProps> = ({
     label,
     icon,
+    rightIcon,
     error,
     fullWidth = false,
     className = '',
@@ -22,9 +24,10 @@ const Input: React.FC<InputProps> = ({
             <div className={`input-container ${error ? 'input-error' : ''}`}>
                 {icon && <span className="input-icon">{icon}</span>}
                 <input
-                    className={`input-field ${icon ? 'with-icon' : ''}`}
+                    className={`input-field ${icon ? 'with-icon' : ''} ${rightIcon ? 'with-right-icon' : ''}`}
                     {...props}
                 />
+                {rightIcon && <span className="input-right-icon">{rightIcon}</span>}
             </div>
             {error && <span className="input-error-message">{error}</span>}
         </div>

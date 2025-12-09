@@ -5,7 +5,8 @@ import { authConfig } from '../config/auth';
 
 interface UserProfile {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: 'user' | 'organizer' | 'admin';
   isVerified: boolean;
@@ -27,7 +28,8 @@ class UserService {
 
       return {
         id: user._id.toString(),
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
         isVerified: user.isVerified,
@@ -52,7 +54,7 @@ class UserService {
   async updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile> {
     try {
       const allowedUpdates = [
-        'name', 'profileImage', 'phone'
+        'firstName', 'lastName', 'profileImage', 'phone'
       ];
 
       const filteredUpdates: any = {};
@@ -74,7 +76,8 @@ class UserService {
 
       return {
         id: user._id.toString(),
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
         isVerified: user.isVerified,

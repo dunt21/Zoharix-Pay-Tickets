@@ -35,8 +35,7 @@ const paymentSchema = new Schema<IPayment>({
   },
   stripePaymentIntentId: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   status: {
     type: String,
@@ -53,7 +52,7 @@ const paymentSchema = new Schema<IPayment>({
 // Indexes for efficient queries
 paymentSchema.index({ user: 1 });
 paymentSchema.index({ booking: 1 });
-paymentSchema.index({ stripePaymentIntentId: 1 });
+paymentSchema.index({ stripePaymentIntentId: 1 }, { unique: true });
 paymentSchema.index({ status: 1 });
 
 export default mongoose.model<IPayment>('Payment', paymentSchema);

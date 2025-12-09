@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
+import axios from 'axios';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
+import { API_BASE_URL, API_ENDPOINTS } from '../../config/api';
 import './Auth.css';
 
 const Login: React.FC = () => {
@@ -30,16 +32,22 @@ const Login: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // TODO: Implement actual login logic
-            console.log('Login attempt:', formData);
+            const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
+                email: formData.email,
+                password: formData.password
+            });
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Save token to localStorage
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
 
             success('Login successful! Redirecting...');
+            console.log('Login response:', response.data);
             navigate('/dashboard');
-        } catch (err) {
-            error('Login failed. Please check your credentials.');
+        } catch (err: any) {
+            const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
+            error(errorMessage);
+            console.error('Login error:', err);
         } finally {
             setIsLoading(false);
         }
@@ -76,16 +84,16 @@ const Login: React.FC = () => {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    icon={
+                    rightIcon={
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             className="password-toggle"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     }
-
                     required
                     fullWidth
                 />

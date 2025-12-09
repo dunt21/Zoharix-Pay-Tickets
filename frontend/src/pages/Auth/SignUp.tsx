@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle, FaUser, FaEnvelope } from 'react-icons/fa';
+import axios from 'axios';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
+import { API_BASE_URL, API_ENDPOINTS } from '../../config/api';
 import './Auth.css';
 
 const SignUp: React.FC = () => {
@@ -68,15 +70,25 @@ const SignUp: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // TODO: Implement actual signup logic
-            console.log('Signup attempt:', formData);
-
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('Attempting signup to:', `${API_BASE_URL}${API_ENDPOINTS.SIGNUP}`);
+            console.log('Signup data:', { email: formData.email, firstName: formData.firstName, lastName: formData.lastName });
+            
+            const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.SIGNUP}`, {
+                email: formData.email,
+                password: formData.password,
+                firstName: formData.firstName,
+                lastName: formData.lastName
+            });
 
             success('Account created successfully! Please check your email for verification.');
-        } catch (err) {
-            error('Signup failed. Please try again.');
+            console.log('Signup response:', response.data);
+        } catch (err: any) {
+            console.error('Full error object:', err);
+            console.error('Error response:', err.response);
+            console.error('Error message:', err.message);
+            
+            const errorMessage = err.response?.data?.message || err.message || 'Signup failed. Please try again.';
+            error(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -140,16 +152,16 @@ const SignUp: React.FC = () => {
                     placeholder="Create a password (min. 8 characters)"
                     value={formData.password}
                     onChange={handleInputChange}
-                    icon={
+                    rightIcon={
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             className="password-toggle"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     }
-
                     required
                     fullWidth
                 />
@@ -161,16 +173,16 @@ const SignUp: React.FC = () => {
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    icon={
+                    rightIcon={
                         <button
                             type="button"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             className="password-toggle"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                         >
                             {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     }
-
                     required
                     fullWidth
                 />

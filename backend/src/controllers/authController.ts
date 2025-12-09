@@ -30,7 +30,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       message: 'Login successful',
       token,
       refreshToken,
-      user: { id: user._id, email: user.email, name: user.name, role: user.role }
+      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role }
     });
   } catch (error) {
     next(error);
@@ -39,7 +39,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
 export const signup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, firstName, lastName } = req.body;
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -52,12 +52,12 @@ export const signup = async (req: Request, res: Response, next: NextFunction): P
     const hashedPassword = await bcrypt.hash(password, authConfig.bcryptRounds);
 
     // Create user
-    const user = new User({ email, password: hashedPassword, name });
+    const user = new User({ email, password: hashedPassword, firstName, lastName });
     await user.save();
 
     res.status(201).json({
       message: 'User created successfully',
-      user: { id: user._id, email: user.email, name: user.name }
+      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName }
     });
   } catch (error) {
     next(error);

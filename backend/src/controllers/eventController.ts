@@ -34,7 +34,7 @@ export const getEvents = async (req: Request, res: Response, next: NextFunction)
     let query: any = {};
     if (search) query = { title: { $regex: search, $options: 'i' } };
     const events = await Event.find(query)
-      .populate('organizer', 'name')
+      .populate('organizer', 'firstName lastName email')
       .limit(Number(limit))
       .skip((Number(page) - 1) * Number(limit));
 

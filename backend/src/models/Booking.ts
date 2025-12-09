@@ -2,8 +2,10 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IBooking extends Document {
   user: mongoose.Types.ObjectId;
-  event: mongoose.Types.ObjectId;
-  tickets: {
+  event?: mongoose.Types.ObjectId;
+  service?: mongoose.Types.ObjectId;
+  type: 'event' | 'service';
+  tickets?: {
     type: string;
     quantity: number;
     price: number;
@@ -24,7 +26,15 @@ const bookingSchema = new Schema<IBooking>({
   },
   event: {
     type: Schema.Types.ObjectId,
-    ref: 'Event',
+    ref: 'Event'
+  },
+  service: {
+    type: Schema.Types.ObjectId,
+    ref: 'Service'
+  },
+  type: {
+    type: String,
+    enum: ['event', 'service'],
     required: true
   },
   tickets: [{
@@ -59,8 +69,7 @@ const bookingSchema = new Schema<IBooking>({
   },
   bookingReference: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   }
 }, {
   timestamps: true
@@ -69,7 +78,9 @@ const bookingSchema = new Schema<IBooking>({
 // Indexes for efficient queries
 bookingSchema.index({ user: 1 });
 bookingSchema.index({ event: 1 });
+bookingSchema.index({ service: 1 });
+bookingSchema.index({ type: 1 });
 bookingSchema.index({ status: 1 });
-bookingSchema.index({ bookingReference: 1 });
+bookingSchema.index({ bookingReference: 1 }, { unique: true });
 
 export default mongoose.model<IBooking>('Booking', bookingSchema);

@@ -11,6 +11,12 @@ const database_1 = __importDefault(require("./config/database"));
 const server_1 = require("./config/server");
 const cors_2 = require("./config/cors");
 const rateLimit_1 = require("./config/rateLimit");
+const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const ticketRoutes_1 = __importDefault(require("./routes/ticketRoutes"));
+const paymentRoutes_1 = __importDefault(require("./routes/paymentRoutes"));
+const dashboardRoutes_1 = __importDefault(require("./routes/dashboardRoutes"));
 (0, database_1.default)();
 const app = (0, express_1.default)();
 app.set('trust proxy', 1);
@@ -29,13 +35,19 @@ app.get('/api/health', (req, res) => {
         version: server_1.serverConfig.apiVersion
     });
 });
-app.use(`/api/${server_1.serverConfig.apiVersion}`, (req, res) => {
+app.use(`/api/${server_1.serverConfig.apiVersion}/auth`, authRoutes_1.default);
+app.use(`/api/${server_1.serverConfig.apiVersion}/events`, eventRoutes_1.default);
+app.use(`/api/${server_1.serverConfig.apiVersion}/users`, userRoutes_1.default);
+app.use(`/api/${server_1.serverConfig.apiVersion}/tickets`, ticketRoutes_1.default);
+app.use(`/api/${server_1.serverConfig.apiVersion}/payments`, paymentRoutes_1.default);
+app.use(`/api/${server_1.serverConfig.apiVersion}/dashboard`, dashboardRoutes_1.default);
+app.get(`/api/${server_1.serverConfig.apiVersion}`, (req, res) => {
     res.status(200).json({
         message: 'API is working',
         version: server_1.serverConfig.apiVersion
     });
 });
-app.use('*', (req, res) => {
+app.use((req, res) => {
     res.status(404).json({
         error: 'Route not found',
         path: req.originalUrl,

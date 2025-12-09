@@ -4,15 +4,7 @@ export interface IEvent extends Document {
   title: string;
   description: string;
   date: Date;
-  location: {
-    address: string;
-    city: string;
-    country: string;
-    coordinates?: {
-      lat: number;
-      lng: number;
-    };
-  };
+  location: string;
   organizer: mongoose.Types.ObjectId;
   category: string;
   imageUrl?: string;
@@ -43,23 +35,9 @@ const eventSchema = new Schema<IEvent>({
     required: true
   },
   location: {
-    address: {
-      type: String,
-      required: true
-    },
-    city: {
-      type: String,
-      required: true
-    },
-    country: {
-      type: String,
-      required: true
-    },
-    coordinates: {
-      lat: Number,
-      lng: Number
-    }
-  },
+   type: String,
+   required: true
+ },
   organizer: {
     type: Schema.Types.ObjectId,
     ref: 'User',

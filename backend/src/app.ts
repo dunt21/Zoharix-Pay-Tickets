@@ -9,6 +9,14 @@ import { serverConfig } from './config/server';
 import { corsOptions } from './config/cors';
 import { rateLimitConfig } from './config/rateLimit';
 
+// Import routes
+import authRoutes from './routes/authRoutes';
+import eventRoutes from './routes/eventRoutes';
+import userRoutes from './routes/userRoutes';
+import ticketRoutes from './routes/ticketRoutes';
+import paymentRoutes from './routes/paymentRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
+
 // Connect to database
 connectDB();
 
@@ -45,8 +53,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API routes prefix
-app.use(`/api/${serverConfig.apiVersion}`, (req, res) => {
+// API routes
+app.use(`/api/${serverConfig.apiVersion}/auth`, authRoutes);
+app.use(`/api/${serverConfig.apiVersion}/events`, eventRoutes);
+app.use(`/api/${serverConfig.apiVersion}/users`, userRoutes);
+app.use(`/api/${serverConfig.apiVersion}/tickets`, ticketRoutes);
+app.use(`/api/${serverConfig.apiVersion}/payments`, paymentRoutes);
+app.use(`/api/${serverConfig.apiVersion}/dashboard`, dashboardRoutes);
+
+// API root endpoint
+app.get(`/api/${serverConfig.apiVersion}`, (req, res) => {
   res.status(200).json({
     message: 'API is working',
     version: serverConfig.apiVersion

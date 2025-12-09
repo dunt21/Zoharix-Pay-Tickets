@@ -3,7 +3,8 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUser extends Document {
   email: string;
   password: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   isVerified: boolean;
   role: 'user' | 'organizer' | 'admin';
   profileImage?: string;
@@ -16,7 +17,6 @@ const userSchema = new Schema<IUser>({
   email: {
     type: String,
     required: true,
-    unique: true,
     lowercase: true,
     trim: true
   },
@@ -24,11 +24,16 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true
   },
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
+  firstName: {
+   type: String,
+   required: true,
+   trim: true
+ },
+ lastName: {
+   type: String,
+   required: true,
+   trim: true
+ },
   isVerified: {
     type: Boolean,
     default: false
@@ -49,7 +54,6 @@ const userSchema = new Schema<IUser>({
   timestamps: true
 });
 
-// Index for email lookups
-userSchema.index({ email: 1 });
+userSchema.index({ email: 1 }, { unique: true });
 
 export default mongoose.model<IUser>('User', userSchema);
