@@ -11,6 +11,7 @@ import Wallet from './pages/Dashboard/Wallet/Wallet';
 import Analytics from './pages/Dashboard/Analytics/Analytics';
 import Settings from './pages/Dashboard/Settings/Settings';
 import Verification from './pages/Auth/Verification';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/verify" element={<Verification />} />
         </Route>
-        <Route path="/dashboard" element={<DashboardLayout />}>
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route index element={<DashboardHome />} />
           <Route path="services" element={<EventsServices />} />
           <Route path="bookings" element={<TicketsBookings />} />

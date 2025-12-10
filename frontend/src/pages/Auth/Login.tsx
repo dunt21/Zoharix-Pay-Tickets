@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
-import axios from 'axios';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
-import { API_BASE_URL, API_ENDPOINTS } from '../../config/api';
+import { apiClient, API_ENDPOINTS } from '../../config/api';
 import './Auth.css';
 
 const Login: React.FC = () => {
@@ -32,7 +31,7 @@ const Login: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
+            const response = await apiClient.post(API_ENDPOINTS.LOGIN, {
                 email: formData.email,
                 password: formData.password
             });
@@ -45,9 +44,29 @@ const Login: React.FC = () => {
             console.log('Login response:', response.data);
             navigate('/dashboard');
         } catch (err: any) {
-            const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
-            error(errorMessage);
             console.error('Login error:', err);
+
+            // Handle different error scenarios
+            let errorMessage = 'Login failed. Please try again.';
+
+            if (err.response) {
+                // Server responded with error
+                if (err.response.status === 401) {
+                    errorMessage = err.response.data?.message || 'Invalid email or password. Please check your credentials.';
+                } else if (err.response.status === 500) {
+                    errorMessage = 'Server error. Please try again later.';
+                } else {
+                    errorMessage = err.response.data?.message || 'Login failed. Please try again.';
+                }
+            } else if (err.request) {
+                // Request made but no response
+                errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else {
+                // Something else happened
+                errorMessage = err.message || 'An unexpected error occurred.';
+            }
+
+            error(errorMessage);
         } finally {
             setIsLoading(false);
         }

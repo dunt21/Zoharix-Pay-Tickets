@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle, FaUser, FaEnvelope } from 'react-icons/fa';
-import axios from 'axios';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
-import { API_BASE_URL, API_ENDPOINTS } from '../../config/api';
+import { apiClient, API_ENDPOINTS } from '../../config/api';
 import './Auth.css';
 
 const SignUp: React.FC = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -70,24 +70,46 @@ const SignUp: React.FC = () => {
         setIsLoading(true);
 
         try {
-            console.log('Attempting signup to:', `${API_BASE_URL}${API_ENDPOINTS.SIGNUP}`);
+            console.log('Attempting signup to:', API_ENDPOINTS.SIGNUP);
             console.log('Signup data:', { email: formData.email, firstName: formData.firstName, lastName: formData.lastName });
-            
-            const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.SIGNUP}`, {
+
+            const response = await apiClient.post(API_ENDPOINTS.SIGNUP, {
                 email: formData.email,
                 password: formData.password,
                 firstName: formData.firstName,
                 lastName: formData.lastName
             });
 
-            success('Account created successfully! Please check your email for verification.');
+            success('Account created successfully! Redirecting to login...');
             console.log('Signup response:', response.data);
+
+            // Redirect to login page after 2 seconds
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         } catch (err: any) {
-            console.error('Full error object:', err);
-            console.error('Error response:', err.response);
-            console.error('Error message:', err.message);
-            
-            const errorMessage = err.response?.data?.message || err.message || 'Signup failed. Please try again.';
+            console.error('Signup error:', err);
+
+            // Handle different error scenarios
+            let errorMessage = 'Signup failed. Please try again.';
+
+            if (err.response) {
+                // Server responded with error
+                if (err.response.status === 400) {
+                    errorMessage = err.response.data?.message || 'User already exists or invalid data.';
+                } else if (err.response.status === 500) {
+                    errorMessage = 'Server error. Please try again later.';
+                } else {
+                    errorMessage = err.response.data?.message || 'Signup failed. Please try again.';
+                }
+            } else if (err.request) {
+                // Request made but no response
+                errorMessage = 'Cannot connect to server. Please check your internet connection.';
+            } else {
+                // Something else happened
+                errorMessage = err.message || 'An unexpected error occurred.';
+            }
+
             error(errorMessage);
         } finally {
             setIsLoading(false);
