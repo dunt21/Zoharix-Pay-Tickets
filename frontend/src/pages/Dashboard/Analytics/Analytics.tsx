@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     BarChart2,
     TrendingUp,
@@ -16,14 +16,74 @@ import {
     MoreHorizontal,
     Search,
     Bell,
-    Globe
+    Globe,
+    ChevronDown,
+    FileText,
+    Mail,
+    Filter,
+    Settings,
+    X,
+    Check
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import Papa from 'papaparse';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import Select from 'react-select';
 import './Analytics.css';
 
+const selectStyles = {
+    control: (provided: any) => ({
+        ...provided,
+        backgroundColor: 'var(--bg-primary)',
+        borderColor: 'var(--border-color)',
+        color: 'var(--text-primary)',
+        '&:hover': {
+            borderColor: 'var(--primary-color)',
+        },
+    }),
+    menu: (provided: any) => ({
+        ...provided,
+        backgroundColor: 'var(--bg-secondary)',
+        border: '1px solid var(--border-color)',
+        borderRadius: '6px',
+    }),
+    option: (provided: any, state: any) => ({
+        ...provided,
+        backgroundColor: state.isSelected ? 'var(--primary-color)' : 'transparent',
+        color: 'var(--text-primary)',
+        '&:hover': {
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+        },
+    }),
+    singleValue: (provided: any) => ({
+        ...provided,
+        color: 'var(--text-primary)',
+    }),
+    input: (provided: any) => ({
+        ...provided,
+        color: 'var(--text-primary)',
+    }),
+    placeholder: (provided: any) => ({
+        ...provided,
+        color: 'var(--text-secondary)',
+    }),
+};
+
 // --- Mock Visual Components ---
-const LineChartVisual = ({ color = "#ec4899" }: { color?: string }) => (
-    <svg width="100%" height="80" viewBox="0 0 300 80" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+const LineChartVisual = ({ color = "#ec4899", onClick }: { color?: string; onClick?: () => void }) => (
+    <svg
+        width="100%"
+        height="80"
+        viewBox="0 0 300 80"
+        preserveAspectRatio="none"
+        style={{ overflow: 'visible', cursor: onClick ? 'pointer' : 'default' }}
+        onClick={onClick}
+    >
         <defs>
             <linearGradient id={`grad-${color.replace('#', '')}`} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor={color} stopOpacity="0.2" />
@@ -109,7 +169,96 @@ const PeakTimesVisual = () => (
 
 const Analytics: React.FC = () => {
     const [activeTab, setActiveTab] = useState('overview');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [showFilters, setShowFilters] = useState(false);
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date()]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [visibleWidgets, setVisibleWidgets] = useState({
+        overview: true,
+        audience: true,
+        revenue: true,
+        events: true
+    });
+    const [showExportDropdown, setShowExportDropdown] = useState(false);
+    const exportDropdownRef = useRef<HTMLDivElement>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
     const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target as Node)) {
+                setShowExportDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Mock data for export
+    const mockData = {
+        overview: {
+            revenue: 24500,
+            users: 892,
+            tickets: 1240,
+            conversion: 12.5
+        },
+        transactions: [
+            { source: 'Neon Nights', date: 'Today', status: 'Paid', amount: 150 },
+            { source: 'Photography', date: 'Yesterday', status: 'Pending', amount: 450 },
+            { source: 'Tech Summit', date: 'Dec 12', status: 'Paid', amount: 50 }
+        ]
+    };
+
+    const handleExportPDF = async () => {
+        const element = document.getElementById('analytics-content');
+        if (!element) return;
+        const canvas = await html2canvas(element);
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        const imgWidth = 210;
+        const pageHeight = 295;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+        pdf.save('analytics-report.pdf');
+    };
+
+    const handleExportCSV = () => {
+        const csv = Papa.unparse(mockData.transactions);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'analytics-data.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handleExportEmail = () => {
+        const subject = 'Analytics Report';
+        const body = `Please find attached the analytics report.\n\nKey Metrics:\n- Revenue: ₵${mockData.overview.revenue}\n- Users: ${mockData.overview.users}\n- Tickets: ${mockData.overview.tickets}`;
+        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    };
+
+    const handleSort = (key: string) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
 
     // --- Render Views ---
 
@@ -128,7 +277,7 @@ const Analytics: React.FC = () => {
                     </div>
                 </div>
                 <div className="chart-wrapper">
-                    <LineChartVisual color="#4ade80" />
+                    <LineChartVisual color="#4ade80" onClick={() => setActiveTab('revenue')} />
                 </div>
                 <div className="chart-axis">
                     <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
@@ -298,6 +447,36 @@ const Analytics: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                <div className="section-card padded">
+                    <h3 className="section-title small-mb">User Segmentation</h3>
+                    <div className="segmentation-grid">
+                        <div className="segment-card">
+                            <h4>Frequent Buyers</h4>
+                            <p>Users who have purchased 3+ tickets</p>
+                            <div className="segment-stats">
+                                <span>Count: 245</span>
+                                <span>Revenue: ₵12,450</span>
+                            </div>
+                        </div>
+                        <div className="segment-card">
+                            <h4>One-time Attendees</h4>
+                            <p>Users with single purchase</p>
+                            <div className="segment-stats">
+                                <span>Count: 647</span>
+                                <span>Revenue: ₵8,200</span>
+                            </div>
+                        </div>
+                        <div className="segment-card">
+                            <h4>High Engagers</h4>
+                            <p>Users active in multiple events</p>
+                            <div className="segment-stats">
+                                <span>Count: 156</span>
+                                <span>Revenue: ₵15,600</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="right-col">
@@ -360,35 +539,54 @@ const Analytics: React.FC = () => {
                 </div>
 
                 <div className="section-card padded">
-                    <h3 className="section-title small-mb">Recent Transactions</h3>
+                    <div className="section-header small-mb">
+                        <h3 className="section-title">Recent Transactions</h3>
+                        <div className="search-sort">
+                            <input
+                                type="text"
+                                placeholder="Search transactions..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="search-input"
+                            />
+                        </div>
+                    </div>
                     <table className="analytics-table">
                         <thead>
                             <tr>
-                                <th>Source</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th style={{ textAlign: 'right' }}>Amount</th>
+                                <th onClick={() => handleSort('source')} style={{ cursor: 'pointer' }}>
+                                    Source {sortConfig?.key === 'source' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                                </th>
+                                <th onClick={() => handleSort('date')} style={{ cursor: 'pointer' }}>
+                                    Date {sortConfig?.key === 'date' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                                </th>
+                                <th onClick={() => handleSort('status')} style={{ cursor: 'pointer' }}>
+                                    Status {sortConfig?.key === 'status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                                </th>
+                                <th onClick={() => handleSort('amount')} style={{ cursor: 'pointer', textAlign: 'right' }}>
+                                    Amount {sortConfig?.key === 'amount' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><div className="t-source"><Ticket size={14} /> Neon Nights</div></td>
-                                <td>Today, 10:45 AM</td>
-                                <td><span className="status-badge success">Paid</span></td>
-                                <td align="right">+₵150.00</td>
-                            </tr>
-                            <tr>
-                                <td><div className="t-source service"><Users size={14} /> Photography</div></td>
-                                <td>Yesterday</td>
-                                <td><span className="status-badge pending">Pending</span></td>
-                                <td align="right">+₵450.00</td>
-                            </tr>
-                            <tr>
-                                <td><div className="t-source"><Ticket size={14} /> Tech Summit</div></td>
-                                <td>Dec 12</td>
-                                <td><span className="status-badge success">Paid</span></td>
-                                <td align="right">+₵50.00</td>
-                            </tr>
+                            {mockData.transactions
+                                .filter(tx => tx.source.toLowerCase().includes(searchTerm.toLowerCase()))
+                                .sort((a, b) => {
+                                    if (!sortConfig) return 0;
+                                    const aVal = a[sortConfig.key as keyof typeof a];
+                                    const bVal = b[sortConfig.key as keyof typeof b];
+                                    if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+                                    if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+                                    return 0;
+                                })
+                                .map((tx, index) => (
+                                    <tr key={index}>
+                                        <td><div className="t-source"><Ticket size={14} /> {tx.source}</div></td>
+                                        <td>{tx.date}</td>
+                                        <td><span className={`status-badge ${tx.status.toLowerCase()}`}>{tx.status}</span></td>
+                                        <td align="right">+₵{tx.amount}.00</td>
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                 </div>
@@ -557,7 +755,7 @@ const Analytics: React.FC = () => {
                     {['Overview', 'Audience', 'Revenue', 'Events'].map(tab => (
                         <button
                             key={tab}
-                            className={`tab-item ${activeTab === tab.toLowerCase() ? 'active' : ''}`}
+                            className={`tab-item ${activeTab === tab.toLowerCase() ? 'active' : ''} ${!visibleWidgets[tab.toLowerCase() as keyof typeof visibleWidgets] ? 'hidden' : ''}`}
                             onClick={() => setActiveTab(tab.toLowerCase())}
                         >
                             {tab}
@@ -565,15 +763,91 @@ const Analytics: React.FC = () => {
                     ))}
                 </div>
                 <div className="toolbar-actions">
-                    <Button variant="outline" className="export-btn" icon={<Download size={16} />}>Descargar Report</Button>
+                    <Button variant="ghost" onClick={() => setShowFilters(!showFilters)} icon={<Filter size={16} />}>Filters</Button>
+                    <div className="export-dropdown" ref={exportDropdownRef}>
+                        <Button variant="outline" className="export-btn" onClick={() => setShowExportDropdown(!showExportDropdown)} icon={<Download size={16} />}>
+                            Descargar Report <ChevronDown size={14} />
+                        </Button>
+                        {showExportDropdown && (
+                            <div className="dropdown-menu">
+                                <button onClick={() => { handleExportPDF(); setShowExportDropdown(false); }}><FileText size={14} /> Export as PDF</button>
+                                <button onClick={() => { handleExportCSV(); setShowExportDropdown(false); }}><FileText size={14} /> Export as CSV</button>
+                                <button onClick={() => { handleExportEmail(); setShowExportDropdown(false); }}><Mail size={14} /> Send via Email</button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* --- Content Content --- */}
-            {activeTab === 'overview' && renderOverview()}
-            {activeTab === 'audience' && renderAudience()}
-            {activeTab === 'revenue' && renderRevenue()}
-            {activeTab === 'events' && renderEvents()}
+            {/* Filters Panel */}
+            {showFilters && (
+                <div className="filters-panel">
+                    <div className="filter-group">
+                        <label>Date Range:</label>
+                        <DatePicker
+                            selectsRange={true}
+                            startDate={dateRange[0]}
+                            endDate={dateRange[1]}
+                            onChange={(update) => setDateRange(update)}
+                            className="date-picker"
+                            placeholderText="Select date range"
+                        />
+                    </div>
+                    <div className="filter-group">
+                        <label>Categories:</label>
+                        <Select
+                            isMulti
+                            options={[
+                                { value: 'music', label: 'Music & Concerts' },
+                                { value: 'tech', label: 'Tech & Workshops' },
+                                { value: 'arts', label: 'Arts & Culture' }
+                            ]}
+                            value={selectedCategories.map(cat => ({ value: cat, label: cat }))}
+                            onChange={(selected) => setSelectedCategories(selected ? selected.map(s => s.value) : [])}
+                            styles={selectStyles}
+                            className="category-select"
+                        />
+                    </div>
+                    <div className="filter-group">
+                        <label>Visible Tabs:</label>
+                        <div className="widget-toggles">
+                            {Object.entries(visibleWidgets).map(([key, visible]) => (
+                                <label key={key} className="toggle-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={visible}
+                                        onChange={() => setVisibleWidgets(prev => ({ ...prev, [key]: !prev[key as keyof typeof prev] }))}
+                                    />
+                                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                    <Button variant="ghost" onClick={() => setShowFilters(false)} icon={<X size={16} />}>Close</Button>
+                </div>
+            )}
+
+            {/* --- Content --- */}
+            <div id="analytics-content">
+                {isLoading ? (
+                    <div className="loading-state">
+                        <Skeleton height={200} />
+                        <Skeleton height={100} count={3} />
+                    </div>
+                ) : error ? (
+                    <div className="error-state">
+                        <p>Error loading data: {error}</p>
+                        <Button onClick={() => setError(null)}>Retry</Button>
+                    </div>
+                ) : (
+                    <>
+                        {activeTab === 'overview' && renderOverview()}
+                        {activeTab === 'audience' && renderAudience()}
+                        {activeTab === 'revenue' && renderRevenue()}
+                        {activeTab === 'events' && renderEvents()}
+                    </>
+                )}
+            </div>
 
         </div>
     );

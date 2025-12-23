@@ -1,4 +1,51 @@
-/* Analytics.css - Matches DashboardHome.css */
+/* Analytics Page Styles */
+.analytics-page {
+    background: var(--bg-primary);
+    min-height: 100vh;
+}
+
+.analytics-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+    gap: 1rem;
+}
+
+.tabs-pill {
+    display: flex;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.tab-item {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.tab-item.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.analytics-content {
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin: 0 1rem;
+    color: var(--text-primary);
+}/* Analytics.css - Matches DashboardHome.css */
 
 .analytics-page {
     animation: fadeIn 0.6s ease-out;
@@ -654,8 +701,260 @@
     width: 100%;
 }
 
+/* Export Dropdown */
+.export-dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    min-width: 150px;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-menu button:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Filters Panel */
+.filters-panel {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.date-picker {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    color: var(--text-primary);
+    width: 100%;
+}
+
+/* React DatePicker Styles */
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    color: var(--text-primary);
+    width: 100%;
+}
+
+.react-datepicker {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+}
+
+.react-datepicker__header {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header {
+    color: var(--text-primary);
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+    color: var(--text-primary);
+}
+
+.react-datepicker__day:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.react-datepicker__day--selected {
+    background: var(--primary-color);
+    color: white;
+}
+
+.react-datepicker__day--keyboard-selected {
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.react-datepicker__navigation {
+    border: none;
+    background: none;
+}
+
+.react-datepicker__navigation:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.category-select {
+    min-width: 200px;
+}
+
+.widget-toggles {
+    display: flex;
+    gap: 1rem;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.toggle-label input {
+    accent-color: var(--primary-color);
+}
+
+/* Loading and Error States */
+.loading-state, .error-state {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+}
+
+.error-state p {
+    color: #ef4444;
+}
+
+/* Search and Sort */
+.search-sort {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-input {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    color: var(--text-primary);
+    width: 200px;
+}
+
+/* Segmentation */
+.segmentation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.segment-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.segment-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+.segment-card h4 {
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.segment-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.segment-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Mobile Optimizations */
 @media (max-width: 1024px) {
     .analytics-grid-layout {
         grid-template-columns: 1fr;
     }
+
+    .filters-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        min-width: auto;
+    }
+
+    .segmentation-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-table {
+        font-size: 0.8rem;
+    }
+
+    .analytics-table th, .analytics-table td {
+        padding: 0.5rem 0.25rem;
+    }
+
+    .chart-wrapper {
+        overflow-x: auto;
+    }
+
+    .peak-chart {
+        min-width: 400px;
+    }
+}
+
+.tab-item.hidden {
+    display: none;
 }
