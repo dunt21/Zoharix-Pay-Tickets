@@ -9,6 +9,10 @@ export interface IUser extends Document {
   role: 'user' | 'organizer' | 'admin';
   profileImage?: string;
   phone?: string;
+  age?: number;
+  gender?: 'male' | 'female' | 'other';
+  location?: string;
+  interests?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

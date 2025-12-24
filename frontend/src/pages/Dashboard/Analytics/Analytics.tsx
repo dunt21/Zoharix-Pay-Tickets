@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-    BarChart2,
     TrendingUp,
-    TrendingDown,
     Users,
     DollarSign,
     Ticket,
     Calendar,
-    ArrowUpRight,
     Activity,
-    PieChart,
     Download,
     Eye,
     Zap,
@@ -21,13 +17,9 @@ import {
     FileText,
     Mail,
     Filter,
-    Settings,
-    X,
-    Check
+    X
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import Papa from 'papaparse';
@@ -169,7 +161,6 @@ const PeakTimesVisual = () => (
 
 const Analytics: React.FC = () => {
     const [activeTab, setActiveTab] = useState('overview');
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showFilters, setShowFilters] = useState(false);
     const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date()]);
@@ -829,12 +820,7 @@ const Analytics: React.FC = () => {
 
             {/* --- Content --- */}
             <div id="analytics-content">
-                {isLoading ? (
-                    <div className="loading-state">
-                        <Skeleton height={200} />
-                        <Skeleton height={100} count={3} />
-                    </div>
-                ) : error ? (
+                {error ? (
                     <div className="error-state">
                         <p>Error loading data: {error}</p>
                         <Button onClick={() => setError(null)}>Retry</Button>
