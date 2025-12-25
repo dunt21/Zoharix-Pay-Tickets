@@ -17,4 +17,7 @@ router.post('/confirm', confirmPayment);
 // GET /api/v1/payments/history
 router.get('/history', getPaymentHistory);
 
+// GET /api/v1/payments/export
+router.get('/export', getPaymentHistory);
+
 export default router;
