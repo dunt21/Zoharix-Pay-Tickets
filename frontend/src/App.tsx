@@ -3,6 +3,8 @@ import Landing from './pages/Landing/Landing';
 import AuthLayout from './components/AuthLayout/AuthLayout';
 import SignUp from './pages/Auth/SignUp';
 import Login from './pages/Auth/Login';
+
+import InstallPrompt from "./components/PWA/InstallPrompt";
 import DashboardLayout from './components/DashboardLayout/DashboardLayout';
 import DashboardHome from './pages/Dashboard/Home/DashboardHome';
 import EventsServices from './pages/Dashboard/Services/EventsServices';
@@ -32,6 +34,8 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
+
+      <InstallPrompt />
     </BrowserRouter>
   );
 }
