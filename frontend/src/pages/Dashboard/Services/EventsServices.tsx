@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
     Calendar,
-    Plus,
     Search,
     MapPin,
     MoreVertical,
@@ -12,7 +11,6 @@ import {
     Image as ImageIcon,
     CheckCircle,
     Star,
-    Filter,
     ArrowRight,
     Briefcase
 } from 'lucide-react';

@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import {
-    BarChart2,
     TrendingUp,
-    TrendingDown,
     Users,
     DollarSign,
     Ticket,
     Calendar,
-    ArrowUpRight,
     Activity,
-    PieChart,
     Download,
     Eye,
     Zap,
