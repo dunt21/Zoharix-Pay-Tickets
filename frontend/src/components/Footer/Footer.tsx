@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBolt, FaTwitter, FaYoutube, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaTwitter, FaYoutube, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import './Footer.css';
 
 const Footer: React.FC = () => {
@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
             <div className="footer-content">
                 <div className="footer-section">
                     <div className="footer-logo">
-                        <FaBolt className="logo-icon" />
+                        <img src="/apple-touch-icon.png" alt="Z-Events Logo" className="footer-logo-img" />
                         <span className="logo-text">Z-Events</span>
                     </div>
                     <p className="footer-tagline">

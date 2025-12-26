@@ -8,15 +8,11 @@ const ThemeToggle: React.FC = () => {
 
     return (
         <button
-            className={`theme-toggle-btn ${theme}`}
+            className="theme-toggle-btn"
             onClick={toggleTheme}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
-            <div className="toggle-track">
-                <div className="toggle-thumb">
-                    {theme === 'dark' ? <FaMoon className="toggle-icon" /> : <FaSun className="toggle-icon" />}
-                </div>
-            </div>
+            {theme === 'dark' ? <FaMoon size={18} /> : <FaSun size={18} />}
         </button>
     );
 };

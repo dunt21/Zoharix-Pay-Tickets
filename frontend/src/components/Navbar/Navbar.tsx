@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { IoWalletOutline } from 'react-icons/io5';
 import Button from '../Button/Button';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import './Navbar.css';
@@ -9,6 +8,7 @@ import './Navbar.css';
 const Navbar: React.FC = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState('home');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -17,6 +17,28 @@ const Navbar: React.FC = () => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Active Section Observer
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { threshold: 0.5, rootMargin: '-70px 0px -70% 0px' }
+        );
+
+        const sections = ['features', 'how-it-works', 'pricing', 'testimonials'];
+        sections.forEach((id) => {
+            const element = document.getElementById(id);
+            if (element) observer.observe(element);
+        });
+
+        return () => observer.disconnect();
     }, []);
 
     // Lock body scroll when mobile menu is open
@@ -58,8 +80,30 @@ const Navbar: React.FC = () => {
         <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
             <div className="nav-container">
                 <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                    <IoWalletOutline className="logo-icon" />
+                    <img src="/apple-touch-icon.png" alt="Z-Events Logo" className="logo-img" />
                     <span className="logo-text">Z-Events</span>
+                </div>
+
+                {/* Desktop Components */}
+                <div className="desktop-nav">
+                    <ul className="nav-links">
+                        <li><a href="#features" className={activeSection === 'features' ? 'active' : ''} onClick={(e) => scrollToSection(e, 'features')}>Features</a></li>
+                        <li><a href="#how-it-works" className={activeSection === 'how-it-works' ? 'active' : ''} onClick={(e) => scrollToSection(e, 'how-it-works')}>How it Works</a></li>
+                        <li><a href="#pricing" className={activeSection === 'pricing' ? 'active' : ''} onClick={(e) => scrollToSection(e, 'pricing')}>Pricing</a></li>
+                        <li><a href="#testimonials" className={activeSection === 'testimonials' ? 'active' : ''} onClick={(e) => scrollToSection(e, 'testimonials')}>Testimonials</a></li>
+                    </ul>
+
+                    <div className="nav-actions">
+                        <ThemeToggle />
+                        <Link to="/signup" className="nav-cta-link" style={{ textDecoration: 'none' }}>
+                            <Button
+                                variant="primary"
+                                className="nav-cta-btn"
+                            >
+                                Get Started
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -71,25 +115,27 @@ const Navbar: React.FC = () => {
                     {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
                 </button>
 
-                {/* Navigation Links */}
-                <ul className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-                    <li><a href="#features" onClick={(e) => scrollToSection(e, 'features')}>Features</a></li>
-                    <li><a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>How it Works</a></li>
-                    <li><a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')}>Pricing</a></li>
-                    <li><a href="#testimonials" onClick={(e) => scrollToSection(e, 'testimonials')}>Testimonials</a></li>
-                    <li><ThemeToggle /></li>
-                    <li>
-                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                {/* Mobile Menu Drawer */}
+                <div className={`mobile-menu ${isMobileMenuOpen ? 'active' : ''}`}>
+                    <ul className="mobile-links">
+                        <li><a href="#features" onClick={(e) => scrollToSection(e, 'features')}>Features</a></li>
+                        <li><a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>How it Works</a></li>
+                        <li><a href="#pricing" onClick={(e) => scrollToSection(e, 'pricing')}>Pricing</a></li>
+                        <li><a href="#testimonials" onClick={(e) => scrollToSection(e, 'testimonials')}>Testimonials</a></li>
+                    </ul>
+                    <div className="mobile-actions">
+                        <ThemeToggle />
+                        <Link to="/signup" style={{ textDecoration: 'none', width: '100%' }}>
                             <Button
                                 variant="primary"
-                                className="nav-cta-btn"
+                                className="nav-cta-btn mobile-cta"
                                 onClick={closeMobileMenu}
                             >
                                 Get Started
                             </Button>
                         </Link>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </nav>
     );

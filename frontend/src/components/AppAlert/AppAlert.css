@@ -1,0 +1,123 @@
+.app-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: alertFadeIn 0.3s ease-out;
+}
+
+@keyframes alertFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.app-alert-content {
+    background: #000000;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 24px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow:
+        0 0 0 1px rgba(139, 92, 246, 0.1),
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(139, 92, 246, 0.1);
+    animation: alertSlideUp 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    overflow: hidden;
+    position: relative;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes alertSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.app-alert-header {
+    padding: 1.5rem 1.5rem 0.75rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.app-alert-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.01em;
+}
+
+.app-alert-body {
+    padding: 0 1.5rem 1.5rem;
+    text-align: center;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.app-alert-body p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.app-alert-footer {
+    padding: 1.25rem 1.5rem;
+    background: rgba(139, 92, 246, 0.05);
+    border-top: 1px solid rgba(139, 92, 246, 0.15);
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Variant styles if needed */
+.app-alert-header.danger h3 {
+    background: linear-gradient(135deg, #ffffff 0%, #ef4444 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.app-alert-header.info h3 {
+    background: linear-gradient(135deg, #ffffff 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media (max-width: 480px) {
+    .app-alert-overlay {
+        padding: 1rem;
+    }
+
+    .app-alert-content {
+        border-radius: 20px;
+    }
+}

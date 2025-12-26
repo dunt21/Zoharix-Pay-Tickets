@@ -7,18 +7,34 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.875rem 2rem;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 800;
+    padding: 0.65rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     font-family: inherit;
     white-space: nowrap;
     position: relative;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: -0.01em;
+}
+
+.btn-sm {
+    padding: 0.45rem 1rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+}
+
+.btn-md {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.95rem;
+}
+
+.btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.05rem;
+    border-radius: 16px;
 }
 
 .btn-icon {
@@ -36,14 +52,13 @@
 .btn-primary {
     background: var(--gradient-primary);
     color: #FFFFFF;
-    /* Always white text on primary button */
-    box-shadow: 0 4px 15px var(--accent-glow);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--accent-glow);
-    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(139, 92, 246, 0.3);
+    filter: brightness(1.05);
 }
 
 .btn-primary:active {
