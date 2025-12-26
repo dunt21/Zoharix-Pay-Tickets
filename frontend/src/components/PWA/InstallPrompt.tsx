@@ -54,38 +54,33 @@ export default function InstallPrompt() {
     if (!showPrompt) return null;
 
     return (
-        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg p-4 z-50 flex flex-col gap-3 animate-in slide-in-from-bottom-5 duration-300">
-            <div className="flex items-start justify-between">
-                <div className="flex gap-3">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400">
-                        <Download size={24} />
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-zinc-900 dark:text-white">Install App</h3>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-                            Install Z-Events for a better experience with offline access and notifications.
-                        </p>
+        <div className="fixed bottom-8 right-8 z-[9999] animate-in slide-in-from-right-5 fade-in duration-300">
+            <div className="flex items-center gap-6 bg-white dark:bg-zinc-800 border-l-[6px] border-purple-600 shadow-2xl rounded-r-xl p-8 pr-10 w-[95vw] md:w-auto md:min-w-[500px] max-w-2xl">
+                <div className="text-purple-600 dark:text-purple-400">
+                    <Download size={32} />
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                    <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-xl">Install App</h3>
+                    <div className="flex gap-6 mt-2">
+                        <button
+                            onClick={handleInstallClick}
+                            className="text-lg font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors py-1"
+                        >
+                            Install Now
+                        </button>
+                        <button
+                            onClick={handleDismiss}
+                            className="text-lg font-semibold text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors py-1"
+                        >
+                            Dismiss
+                        </button>
                     </div>
                 </div>
                 <button
                     onClick={handleDismiss}
-                    className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+                    className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors -mr-4 -mt-4 p-3"
                 >
-                    <X size={20} />
-                </button>
-            </div>
-            <div className="flex gap-2 justify-end">
-                <button
-                    onClick={handleDismiss}
-                    className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-                >
-                    Not now
-                </button>
-                <button
-                    onClick={handleInstallClick}
-                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-md transition-colors shadow-sm"
-                >
-                    Install
+                    <X size={24} />
                 </button>
             </div>
         </div>
