@@ -749,7 +749,7 @@ const EventsServices: React.FC = () => {
                                                         label="Total Attendee Limit"
                                                         icon={<CheckCircle size={18} />}
                                                         value={formData.total || 0}
-                                                        onChange={(val) => setFormData({ ...formData, total: val })}
+                                                        onChange={(val) => setFormData({ ...formData, total: val.toString() })}
                                                         min={1}
                                                     />
                                                 </div>
