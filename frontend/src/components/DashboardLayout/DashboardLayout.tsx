@@ -21,10 +21,10 @@ const DashboardLayout: React.FC = () => {
             <div className="dashboard-main">
                 {/* Mobile Header */}
                 <div className="dashboard-mobile-header">
+                    <span className="mobile-title">Z-Events</span>
                     <button className="menu-toggle" onClick={toggleSidebar}>
                         <FaBars />
                     </button>
-                    <span className="mobile-title">Z-Events</span>
                 </div>
 
                 <div className="dashboard-content">

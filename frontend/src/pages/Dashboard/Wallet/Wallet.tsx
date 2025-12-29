@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
+import Select from '../../../components/Select/Select';
 import './Wallet.css';
 
 // --- Types ---
@@ -61,8 +62,8 @@ const SAMPLE_PAYMENT_METHODS: PaymentMethod[] = [
 const Wallet: React.FC = () => {
     const navigate = useNavigate();
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const [balance] = useState(1245.50);
-    const [transactions] = useState<Transaction[]>(SAMPLE_TRANSACTIONS);
+    const [balance, setBalance] = useState(1245.50);
+    const [transactions, setTransactions] = useState<Transaction[]>(SAMPLE_TRANSACTIONS);
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(SAMPLE_PAYMENT_METHODS);
     const [isBalanceHidden, setIsBalanceHidden] = useState(false);
     const [cardBrand, setCardBrand] = useState('VISA');
@@ -78,6 +79,13 @@ const Wallet: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [countryCode, setCountryCode] = useState('+233');
     const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
+
+    // Top Up & Withdraw State
+    const [showTopUpModal, setShowTopUpModal] = useState(false);
+    const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+    const [topUpAmount, setTopUpAmount] = useState('');
+    const [withdrawAmount, setWithdrawAmount] = useState('');
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -120,12 +128,12 @@ const Wallet: React.FC = () => {
                 cvv
             };
             setPaymentMethods(prev => [...prev, newMethod]);
-            
+
             // Update the visa card display with the new card info
             setCardBrand(provider.toUpperCase());
             setCardLast4(last4);
             setCardExpiry(expiryDate);
-            
+
             setCardNumber('');
             setExpiryDate('');
             setCvv('');
@@ -148,11 +156,81 @@ const Wallet: React.FC = () => {
     };
 
     const handleTopUp = () => {
-        alert('Top Up Feature - Coming Soon!');
+        setShowTopUpModal(true);
     };
 
     const handleWithdraw = () => {
-        alert('Withdrawal Feature - Coming Soon!');
+        setShowWithdrawModal(true);
+    };
+
+    const processTopUp = () => {
+        const amount = parseFloat(topUpAmount);
+        if (!amount || amount <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+        if (!selectedPaymentMethod) {
+            alert('Please select a payment method');
+            return;
+        }
+
+        const method = paymentMethods.find(pm => pm.id === selectedPaymentMethod);
+        if (!method) return;
+
+        // Add transaction
+        const newTransaction: Transaction = {
+            id: `t${Date.now()}`,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+            description: 'Wallet Top Up',
+            amount: amount,
+            type: 'credit',
+            method: method.kind,
+            status: 'completed'
+        };
+
+        setTransactions(prev => [newTransaction, ...prev]);
+        setBalance(prev => prev + amount);
+        setTopUpAmount('');
+        setSelectedPaymentMethod('');
+        setShowTopUpModal(false);
+        alert(`Successfully added ₵${amount.toFixed(2)} to your wallet!`);
+    };
+
+    const processWithdraw = () => {
+        const amount = parseFloat(withdrawAmount);
+        if (!amount || amount <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+        if (amount > balance) {
+            alert('Insufficient balance');
+            return;
+        }
+        if (!selectedPaymentMethod) {
+            alert('Please select a payment method');
+            return;
+        }
+
+        const method = paymentMethods.find(pm => pm.id === selectedPaymentMethod);
+        if (!method) return;
+
+        // Add transaction
+        const newTransaction: Transaction = {
+            id: `t${Date.now()}`,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+            description: `Withdrawal to ${method.kind}`,
+            amount: -amount,
+            type: 'debit',
+            method: method.kind,
+            status: 'pending'
+        };
+
+        setTransactions(prev => [newTransaction, ...prev]);
+        setBalance(prev => prev - amount);
+        setWithdrawAmount('');
+        setSelectedPaymentMethod('');
+        setShowWithdrawModal(false);
+        alert(`Withdrawal of ₵${amount.toFixed(2)} initiated. Processing time: 1-3 business days.`);
     };
 
     const handleManageCards = () => {
@@ -165,6 +243,8 @@ const Wallet: React.FC = () => {
     };
 
     const handleExportStatement = (format: string) => {
+        const dateStr = new Date().toISOString().split('T')[0];
+
         if (format === 'csv') {
             // Create CSV content
             const headers = ['Date', 'Description', 'Method', 'Amount', 'Status'];
@@ -174,7 +254,7 @@ const Wallet: React.FC = () => {
                     t.date,
                     `"${t.description}"`,
                     t.method,
-                    `${t.type === 'credit' ? '+' : '-'}${Math.abs(t.amount)}`,
+                    `${t.type === 'credit' ? '+' : '-'}₵${Math.abs(t.amount).toFixed(2)}`,
                     t.status
                 ].join(','))
             ].join('\n');
@@ -184,13 +264,206 @@ const Wallet: React.FC = () => {
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', `transaction-history-${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute('download', `transaction-history-${dateStr}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        } else {
-            alert(`Exporting statement as ${format.toUpperCase()} - Backend integration needed for ${format.toUpperCase()} format`);
+            URL.revokeObjectURL(url);
+        } else if (format === 'excel') {
+            // Create Excel-compatible HTML content
+            const excelContent = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+                <head>
+                    <meta charset="utf-8">
+                    <style>
+                        table { border-collapse: collapse; width: 100%; }
+                        th { background-color: #4CAF50; color: white; padding: 12px; text-align: left; font-weight: bold; }
+                        td { padding: 10px; border: 1px solid #ddd; }
+                        tr:nth-child(even) { background-color: #f2f2f2; }
+                        .credit { color: #22c55e; font-weight: bold; }
+                        .debit { color: #ef4444; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Z-Events Transaction History</h2>
+                    <p>Generated on: ${new Date().toLocaleDateString()}</p>
+                    <p>Account Balance: ₵${balance.toFixed(2)}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Method</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${transactions.map(t => `
+                                <tr>
+                                    <td>${t.date}</td>
+                                    <td>${t.description}</td>
+                                    <td>${t.method}</td>
+                                    <td class="${t.type}">${t.type === 'credit' ? '+' : '-'}₵${Math.abs(t.amount).toFixed(2)}</td>
+                                    <td>${t.status}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `transaction-history-${dateStr}.xls`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        } else if (format === 'pdf') {
+            // Create printable HTML content for PDF
+            const printWindow = window.open('', '_blank');
+            if (printWindow) {
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Transaction History - ${dateStr}</title>
+                        <style>
+                            @media print {
+                                body { margin: 0; }
+                                .no-print { display: none; }
+                            }
+                            body {
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                padding: 40px;
+                                color: #333;
+                            }
+                            .header {
+                                text-align: center;
+                                margin-bottom: 30px;
+                                border-bottom: 3px solid #4CAF50;
+                                padding-bottom: 20px;
+                            }
+                            .header h1 {
+                                color: #4CAF50;
+                                margin: 0;
+                                font-size: 28px;
+                            }
+                            .info {
+                                margin: 20px 0;
+                                padding: 15px;
+                                background: #f5f5f5;
+                                border-radius: 8px;
+                            }
+                            .info p {
+                                margin: 5px 0;
+                                font-size: 14px;
+                            }
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 20px;
+                            }
+                            th {
+                                background-color: #4CAF50;
+                                color: white;
+                                padding: 12px;
+                                text-align: left;
+                                font-weight: 600;
+                            }
+                            td {
+                                padding: 10px 12px;
+                                border-bottom: 1px solid #ddd;
+                            }
+                            tr:hover {
+                                background-color: #f9f9f9;
+                            }
+                            .credit {
+                                color: #22c55e;
+                                font-weight: bold;
+                            }
+                            .debit {
+                                color: #ef4444;
+                                font-weight: bold;
+                            }
+                            .status-completed {
+                                color: #22c55e;
+                            }
+                            .status-pending {
+                                color: #f59e0b;
+                            }
+                            .footer {
+                                margin-top: 40px;
+                                text-align: center;
+                                font-size: 12px;
+                                color: #666;
+                            }
+                            .print-btn {
+                                margin: 20px 0;
+                                padding: 12px 24px;
+                                background: #4CAF50;
+                                color: white;
+                                border: none;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-size: 16px;
+                            }
+                            .print-btn:hover {
+                                background: #45a049;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>Z-Events Transaction History</h1>
+                        </div>
+                        
+                        <div class="info">
+                            <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                            <p><strong>Account Balance:</strong> ₵${balance.toFixed(2)}</p>
+                            <p><strong>Total Transactions:</strong> ${transactions.length}</p>
+                        </div>
+
+                        <button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Method</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${transactions.map(t => `
+                                    <tr>
+                                        <td>${t.date}</td>
+                                        <td>${t.description}</td>
+                                        <td>${t.method}</td>
+                                        <td class="${t.type}">${t.type === 'credit' ? '+' : '-'}₵${Math.abs(t.amount).toFixed(2)}</td>
+                                        <td class="status-${t.status}">${t.status === 'completed' ? '✓ Completed' : '⏳ Pending'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+
+                        <div class="footer">
+                            <p>This is an official statement from Z-Events</p>
+                            <p>© ${new Date().getFullYear()} Z-Events. All rights reserved.</p>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            }
         }
         setIsExportDropdownOpen(false);
     };
@@ -497,179 +770,182 @@ const Wallet: React.FC = () => {
                                     ) : (
                                         <>
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                <select
-                                                    value={countryCode}
-                                                    onChange={(e) => setCountryCode(e.target.value)}
-                                                    className="country-code-select"
-                                                >
-                                                    <option value="+93">🇦🇫 Afghanistan (+93)</option>
-                                                    <option value="+355">🇦🇱 Albania (+355)</option>
-                                                    <option value="+213">🇩🇿 Algeria (+213)</option>
-                                                    <option value="+376">🇦🇩 Andorra (+376)</option>
-                                                    <option value="+244">🇦🇴 Angola (+244)</option>
-                                                    <option value="+54">🇦🇷 Argentina (+54)</option>
-                                                    <option value="+374">🇦🇲 Armenia (+374)</option>
-                                                    <option value="+61">🇦🇺 Australia (+61)</option>
-                                                    <option value="+43">🇦🇹 Austria (+43)</option>
-                                                    <option value="+994">🇦🇿 Azerbaijan (+994)</option>
-                                                    <option value="+973">🇧🇭 Bahrain (+973)</option>
-                                                    <option value="+880">🇧🇩 Bangladesh (+880)</option>
-                                                    <option value="+375">🇧🇾 Belarus (+375)</option>
-                                                    <option value="+32">🇧🇪 Belgium (+32)</option>
-                                                    <option value="+229">🇧🇯 Benin (+229)</option>
-                                                    <option value="+975">🇧🇹 Bhutan (+975)</option>
-                                                    <option value="+591">🇧🇴 Bolivia (+591)</option>
-                                                    <option value="+387">🇧🇦 Bosnia (+387)</option>
-                                                    <option value="+267">🇧🇼 Botswana (+267)</option>
-                                                    <option value="+55">🇧🇷 Brazil (+55)</option>
-                                                    <option value="+673">🇧🇳 Brunei (+673)</option>
-                                                    <option value="+359">🇧🇬 Bulgaria (+359)</option>
-                                                    <option value="+226">🇧🇫 Burkina Faso (+226)</option>
-                                                    <option value="+257">🇧🇮 Burundi (+257)</option>
-                                                    <option value="+855">🇰🇭 Cambodia (+855)</option>
-                                                    <option value="+237">🇨🇲 Cameroon (+237)</option>
-                                                    <option value="+1">🇨🇦 Canada (+1)</option>
-                                                    <option value="+238">🇨🇻 Cape Verde (+238)</option>
-                                                    <option value="+236">🇨🇫 Central African Republic (+236)</option>
-                                                    <option value="+235">🇹🇩 Chad (+235)</option>
-                                                    <option value="+56">🇨🇱 Chile (+56)</option>
-                                                    <option value="+86">🇨🇳 China (+86)</option>
-                                                    <option value="+57">🇨🇴 Colombia (+57)</option>
-                                                    <option value="+269">🇰🇲 Comoros (+269)</option>
-                                                    <option value="+242">🇨🇬 Congo (+242)</option>
-                                                    <option value="+506">🇨🇷 Costa Rica (+506)</option>
-                                                    <option value="+385">🇭🇷 Croatia (+385)</option>
-                                                    <option value="+53">🇨🇺 Cuba (+53)</option>
-                                                    <option value="+357">🇨🇾 Cyprus (+357)</option>
-                                                    <option value="+420">🇨🇿 Czech Republic (+420)</option>
-                                                    <option value="+45">🇩🇰 Denmark (+45)</option>
-                                                    <option value="+253">🇩🇯 Djibouti (+253)</option>
-                                                    <option value="+593">🇪🇨 Ecuador (+593)</option>
-                                                    <option value="+20">🇪🇬 Egypt (+20)</option>
-                                                    <option value="+503">🇸🇻 El Salvador (+503)</option>
-                                                    <option value="+240">🇬🇶 Equatorial Guinea (+240)</option>
-                                                    <option value="+291">🇪🇷 Eritrea (+291)</option>
-                                                    <option value="+372">🇪🇪 Estonia (+372)</option>
-                                                    <option value="+251">🇪🇹 Ethiopia (+251)</option>
-                                                    <option value="+679">🇫🇯 Fiji (+679)</option>
-                                                    <option value="+358">🇫🇮 Finland (+358)</option>
-                                                    <option value="+33">🇫🇷 France (+33)</option>
-                                                    <option value="+241">🇬🇦 Gabon (+241)</option>
-                                                    <option value="+220">🇬🇲 Gambia (+220)</option>
-                                                    <option value="+995">🇬🇪 Georgia (+995)</option>
-                                                    <option value="+49">🇩🇪 Germany (+49)</option>
-                                                    <option value="+233">🇬🇭 Ghana (+233)</option>
-                                                    <option value="+30">🇬🇷 Greece (+30)</option>
-                                                    <option value="+502">🇬🇹 Guatemala (+502)</option>
-                                                    <option value="+224">🇬🇳 Guinea (+224)</option>
-                                                    <option value="+245">🇬🇼 Guinea-Bissau (+245)</option>
-                                                    <option value="+592">🇬🇾 Guyana (+592)</option>
-                                                    <option value="+509">🇭🇹 Haiti (+509)</option>
-                                                    <option value="+504">🇭🇳 Honduras (+504)</option>
-                                                    <option value="+852">🇭🇰 Hong Kong (+852)</option>
-                                                    <option value="+36">🇭🇺 Hungary (+36)</option>
-                                                    <option value="+354">🇮🇸 Iceland (+354)</option>
-                                                    <option value="+91">🇮🇳 India (+91)</option>
-                                                    <option value="+62">🇮🇩 Indonesia (+62)</option>
-                                                    <option value="+98">🇮🇷 Iran (+98)</option>
-                                                    <option value="+964">🇮🇶 Iraq (+964)</option>
-                                                    <option value="+353">🇮🇪 Ireland (+353)</option>
-                                                    <option value="+972">🇮🇱 Israel (+972)</option>
-                                                    <option value="+39">🇮🇹 Italy (+39)</option>
-                                                    <option value="+225">🇨🇮 Ivory Coast (+225)</option>
-                                                    <option value="+81">🇯🇵 Japan (+81)</option>
-                                                    <option value="+962">🇯🇴 Jordan (+962)</option>
-                                                    <option value="+7">🇰🇿 Kazakhstan (+7)</option>
-                                                    <option value="+254">🇰🇪 Kenya (+254)</option>
-                                                    <option value="+965">🇰🇼 Kuwait (+965)</option>
-                                                    <option value="+996">🇰🇬 Kyrgyzstan (+996)</option>
-                                                    <option value="+856">🇱🇦 Laos (+856)</option>
-                                                    <option value="+371">🇱🇻 Latvia (+371)</option>
-                                                    <option value="+961">🇱🇧 Lebanon (+961)</option>
-                                                    <option value="+266">🇱🇸 Lesotho (+266)</option>
-                                                    <option value="+231">🇱🇷 Liberia (+231)</option>
-                                                    <option value="+218">🇱🇾 Libya (+218)</option>
-                                                    <option value="+370">🇱🇹 Lithuania (+370)</option>
-                                                    <option value="+352">🇱🇺 Luxembourg (+352)</option>
-                                                    <option value="+261">🇲🇬 Madagascar (+261)</option>
-                                                    <option value="+265">🇲🇼 Malawi (+265)</option>
-                                                    <option value="+60">🇲🇾 Malaysia (+60)</option>
-                                                    <option value="+960">🇲🇻 Maldives (+960)</option>
-                                                    <option value="+223">🇲🇱 Mali (+223)</option>
-                                                    <option value="+356">🇲🇹 Malta (+356)</option>
-                                                    <option value="+222">🇲🇷 Mauritania (+222)</option>
-                                                    <option value="+230">🇲🇺 Mauritius (+230)</option>
-                                                    <option value="+52">🇲🇽 Mexico (+52)</option>
-                                                    <option value="+373">🇲🇩 Moldova (+373)</option>
-                                                    <option value="+377">🇲🇨 Monaco (+377)</option>
-                                                    <option value="+976">🇲🇳 Mongolia (+976)</option>
-                                                    <option value="+382">🇲🇪 Montenegro (+382)</option>
-                                                    <option value="+212">🇲🇦 Morocco (+212)</option>
-                                                    <option value="+258">🇲🇿 Mozambique (+258)</option>
-                                                    <option value="+95">🇲🇲 Myanmar (+95)</option>
-                                                    <option value="+264">🇳🇦 Namibia (+264)</option>
-                                                    <option value="+977">🇳🇵 Nepal (+977)</option>
-                                                    <option value="+31">🇳🇱 Netherlands (+31)</option>
-                                                    <option value="+64">🇳🇿 New Zealand (+64)</option>
-                                                    <option value="+505">🇳🇮 Nicaragua (+505)</option>
-                                                    <option value="+227">🇳🇪 Niger (+227)</option>
-                                                    <option value="+234">🇳🇬 Nigeria (+234)</option>
-                                                    <option value="+850">🇰🇵 North Korea (+850)</option>
-                                                    <option value="+389">🇲🇰 North Macedonia (+389)</option>
-                                                    <option value="+47">🇳🇴 Norway (+47)</option>
-                                                    <option value="+968">🇴🇲 Oman (+968)</option>
-                                                    <option value="+92">🇵🇰 Pakistan (+92)</option>
-                                                    <option value="+970">🇵🇸 Palestine (+970)</option>
-                                                    <option value="+507">🇵🇦 Panama (+507)</option>
-                                                    <option value="+595">🇵🇾 Paraguay (+595)</option>
-                                                    <option value="+51">🇵🇪 Peru (+51)</option>
-                                                    <option value="+63">🇵🇭 Philippines (+63)</option>
-                                                    <option value="+48">🇵🇱 Poland (+48)</option>
-                                                    <option value="+351">🇵🇹 Portugal (+351)</option>
-                                                    <option value="+974">🇶🇦 Qatar (+974)</option>
-                                                    <option value="+40">🇷🇴 Romania (+40)</option>
-                                                    <option value="+7">🇷🇺 Russia (+7)</option>
-                                                    <option value="+250">🇷🇼 Rwanda (+250)</option>
-                                                    <option value="+966">🇸🇦 Saudi Arabia (+966)</option>
-                                                    <option value="+221">🇸🇳 Senegal (+221)</option>
-                                                    <option value="+381">🇷🇸 Serbia (+381)</option>
-                                                    <option value="+232">🇸🇱 Sierra Leone (+232)</option>
-                                                    <option value="+65">🇸🇬 Singapore (+65)</option>
-                                                    <option value="+421">🇸🇰 Slovakia (+421)</option>
-                                                    <option value="+386">🇸🇮 Slovenia (+386)</option>
-                                                    <option value="+252">🇸🇴 Somalia (+252)</option>
-                                                    <option value="+27">🇿🇦 South Africa (+27)</option>
-                                                    <option value="+82">🇰🇷 South Korea (+82)</option>
-                                                    <option value="+211">🇸🇸 South Sudan (+211)</option>
-                                                    <option value="+34">🇪🇸 Spain (+34)</option>
-                                                    <option value="+94">🇱🇰 Sri Lanka (+94)</option>
-                                                    <option value="+249">🇸🇩 Sudan (+249)</option>
-                                                    <option value="+597">🇸🇷 Suriname (+597)</option>
-                                                    <option value="+268">🇸🇿 Eswatini (+268)</option>
-                                                    <option value="+46">🇸🇪 Sweden (+46)</option>
-                                                    <option value="+41">🇨🇭 Switzerland (+41)</option>
-                                                    <option value="+963">🇸🇾 Syria (+963)</option>
-                                                    <option value="+886">🇹🇼 Taiwan (+886)</option>
-                                                    <option value="+992">🇹🇯 Tajikistan (+992)</option>
-                                                    <option value="+255">🇹🇿 Tanzania (+255)</option>
-                                                    <option value="+66">🇹🇭 Thailand (+66)</option>
-                                                    <option value="+228">🇹🇬 Togo (+228)</option>
-                                                    <option value="+216">🇹🇳 Tunisia (+216)</option>
-                                                    <option value="+90">🇹🇷 Turkey (+90)</option>
-                                                    <option value="+993">🇹🇲 Turkmenistan (+993)</option>
-                                                    <option value="+256">🇺🇬 Uganda (+256)</option>
-                                                    <option value="+380">🇺🇦 Ukraine (+380)</option>
-                                                    <option value="+971">🇦🇪 UAE (+971)</option>
-                                                    <option value="+44">🇬🇧 United Kingdom (+44)</option>
-                                                    <option value="+1">🇺🇸 United States (+1)</option>
-                                                    <option value="+598">🇺🇾 Uruguay (+598)</option>
-                                                    <option value="+998">🇺🇿 Uzbekistan (+998)</option>
-                                                    <option value="+58">🇻🇪 Venezuela (+58)</option>
-                                                    <option value="+84">🇻🇳 Vietnam (+84)</option>
-                                                    <option value="+967">🇾🇪 Yemen (+967)</option>
-                                                    <option value="+260">🇿🇲 Zambia (+260)</option>
-                                                    <option value="+263">🇿🇼 Zimbabwe (+263)</option>
-                                                </select>
+                                                <div style={{ width: '140px' }}>
+                                                    <Select
+                                                        value={countryCode}
+                                                        onChange={(value) => setCountryCode(value)}
+                                                        options={[
+                                                            { value: "+93", label: "🇦🇫 +93" },
+                                                            { value: "+355", label: "🇦🇱 +355" },
+                                                            { value: "+213", label: "🇩🇿 +213" },
+                                                            { value: "+376", label: "🇦🇩 +376" },
+                                                            { value: "+244", label: "🇦🇴 +244" },
+                                                            { value: "+54", label: "🇦🇷 +54" },
+                                                            { value: "+374", label: "🇦🇲 +374" },
+                                                            { value: "+61", label: "🇦🇺 +61" },
+                                                            { value: "+43", label: "🇦🇹 +43" },
+                                                            { value: "+994", label: "🇦🇿 +994" },
+                                                            { value: "+973", label: "🇧🇭 +973" },
+                                                            { value: "+880", label: "🇧 +880" },
+                                                            { value: "+375", label: "🇧🇾 +375" },
+                                                            { value: "+32", label: "🇧🇪 +32" },
+                                                            { value: "+229", label: "🇧🇯 +229" },
+                                                            { value: "+975", label: "🇧🇹 +975" },
+                                                            { value: "+591", label: "🇧🇴 +591" },
+                                                            { value: "+387", label: "🇧🇦 +387" },
+                                                            { value: "+267", label: "🇧🇼 +267" },
+                                                            { value: "+55", label: "🇧🇷 +55" },
+                                                            { value: "+673", label: "🇧🇳 +673" },
+                                                            { value: "+359", label: "🇧🇬 +359" },
+                                                            { value: "+226", label: "🇧🇫 +226" },
+                                                            { value: "+257", label: "🇧🇮 +257" },
+                                                            { value: "+855", label: "🇰🇭 +855" },
+                                                            { value: "+237", label: "🇨🇲 +237" },
+                                                            { value: "+1", label: "🇨🇦 +1" },
+                                                            { value: "+238", label: "🇨🇻 +238" },
+                                                            { value: "+236", label: "🇨🇫 +236" },
+                                                            { value: "+235", label: "🇹🇩 +235" },
+                                                            { value: "+56", label: "🇨🇱 +56" },
+                                                            { value: "+86", label: "🇨🇳 +86" },
+                                                            { value: "+57", label: "🇨🇴 +57" },
+                                                            { value: "+269", label: "🇰🇲 +269" },
+                                                            { value: "+242", label: "🇨🇬 +242" },
+                                                            { value: "+506", label: "🇨🇷 +506" },
+                                                            { value: "+385", label: "🇭🇷 +385" },
+                                                            { value: "+53", label: "🇨🇺 +53" },
+                                                            { value: "+357", label: "🇨🇾 +357" },
+                                                            { value: "+420", label: "🇨🇿 +420" },
+                                                            { value: "+45", label: "🇩🇰 +45" },
+                                                            { value: "+253", label: "🇩🇯 +253" },
+                                                            { value: "+593", label: "🇪🇨 +593" },
+                                                            { value: "+20", label: "🇪🇬 +20" },
+                                                            { value: "+503", label: "🇸🇻 +503" },
+                                                            { value: "+240", label: "🇬🇶 +240" },
+                                                            { value: "+291", label: "🇪🇷 +291" },
+                                                            { value: "+372", label: "🇪🇪 +372" },
+                                                            { value: "+251", label: "🇪🇹 +251" },
+                                                            { value: "+679", label: "🇫🇯 +679" },
+                                                            { value: "+358", label: "🇫🇮 +358" },
+                                                            { value: "+33", label: "🇫🇷 +33" },
+                                                            { value: "+241", label: "🇬🇦 +241" },
+                                                            { value: "+220", label: "🇬🇲 +220" },
+                                                            { value: "+995", label: "🇬🇪 +995" },
+                                                            { value: "+49", label: "🇩🇪 +49" },
+                                                            { value: "+233", label: "🇬🇭 +233" },
+                                                            { value: "+30", label: "🇬🇷 +30" },
+                                                            { value: "+502", label: "🇬🇹 +502" },
+                                                            { value: "+224", label: "🇬🇳 +224" },
+                                                            { value: "+245", label: "🇬🇼 +245" },
+                                                            { value: "+592", label: "🇬🇾 +592" },
+                                                            { value: "+509", label: "🇭🇹 +509" },
+                                                            { value: "+504", label: "🇭🇳 +504" },
+                                                            { value: "+852", label: "🇭🇰 +852" },
+                                                            { value: "+36", label: "🇭🇺 +36" },
+                                                            { value: "+354", label: "🇮🇸 +354" },
+                                                            { value: "+91", label: "🇮🇳 +91" },
+                                                            { value: "+62", label: "🇮🇩 +62" },
+                                                            { value: "+98", label: "🇮🇷 +98" },
+                                                            { value: "+964", label: "🇮🇶 +964" },
+                                                            { value: "+353", label: "🇮🇪 +353" },
+                                                            { value: "+972", label: "🇮🇱 +972" },
+                                                            { value: "+39", label: "🇮🇹 +39" },
+                                                            { value: "+225", label: "🇨🇮 +225" },
+                                                            { value: "+81", label: "🇯🇵 +81" },
+                                                            { value: "+962", label: "🇯🇴 +962" },
+                                                            { value: "+7", label: "🇰🇿 +7" },
+                                                            { value: "+254", label: "🇰🇪 +254" },
+                                                            { value: "+965", label: "🇰🇼 +965" },
+                                                            { value: "+996", label: "🇰🇬 +996" },
+                                                            { value: "+856", label: "🇱🇦 +856" },
+                                                            { value: "+371", label: "🇱🇻 +371" },
+                                                            { value: "+961", label: "🇱🇧 +961" },
+                                                            { value: "+266", label: "🇱🇸 +266" },
+                                                            { value: "+231", label: "🇱🇷 +231" },
+                                                            { value: "+218", label: "🇱🇾 +218" },
+                                                            { value: "+370", label: "🇱🇹 +370" },
+                                                            { value: "+352", label: "🇱🇺 +352" },
+                                                            { value: "+261", label: "🇲🇬 +261" },
+                                                            { value: "+265", label: "🇲🇼 +265" },
+                                                            { value: "+60", label: "🇲🇾 +60" },
+                                                            { value: "+960", label: "🇲🇻 +960" },
+                                                            { value: "+223", label: "🇲🇱 +223" },
+                                                            { value: "+356", label: "🇲🇹 +356" },
+                                                            { value: "+222", label: "🇲🇷 +222" },
+                                                            { value: "+230", label: "🇲🇺 +230" },
+                                                            { value: "+52", label: "🇲🇽 +52" },
+                                                            { value: "+373", label: "🇲🇩 +373" },
+                                                            { value: "+377", label: "🇲🇨 +377" },
+                                                            { value: "+976", label: "🇲🇳 +976" },
+                                                            { value: "+382", label: "🇲🇪 +382" },
+                                                            { value: "+212", label: "🇲🇦 +212" },
+                                                            { value: "+258", label: "🇲🇿 +258" },
+                                                            { value: "+95", label: "🇲🇲 +95" },
+                                                            { value: "+264", label: "🇳🇦 +264" },
+                                                            { value: "+977", label: "🇳🇵 +977" },
+                                                            { value: "+31", label: "🇳🇱 +31" },
+                                                            { value: "+64", label: "🇳🇿 +64" },
+                                                            { value: "+505", label: "🇳🇮 +505" },
+                                                            { value: "+227", label: "🇳🇪 +227" },
+                                                            { value: "+234", label: "🇳🇬 +234" },
+                                                            { value: "+850", label: "🇰🇵 +850" },
+                                                            { value: "+389", label: "🇲🇰 +389" },
+                                                            { value: "+47", label: "🇳🇴 +47" },
+                                                            { value: "+968", label: "🇴🇲 +968" },
+                                                            { value: "+92", label: "🇵🇰 +92" },
+                                                            { value: "+970", label: "🇵🇸 +970" },
+                                                            { value: "+507", label: "🇵🇦 +507" },
+                                                            { value: "+595", label: "🇵🇾 +595" },
+                                                            { value: "+51", label: "🇵🇪 +51" },
+                                                            { value: "+63", label: "🇵🇭 +63" },
+                                                            { value: "+48", label: "🇵🇱 +48" },
+                                                            { value: "+351", label: "🇵🇹 +351" },
+                                                            { value: "+974", label: "🇶🇦 +974" },
+                                                            { value: "+40", label: "🇷🇴 +40" },
+                                                            { value: "+7", label: "🇷🇺 +7" },
+                                                            { value: "+250", label: "🇷🇼 +250" },
+                                                            { value: "+966", label: "🇸🇦 +966" },
+                                                            { value: "+221", label: "🇸🇳 +221" },
+                                                            { value: "+381", label: "🇷🇸 +381" },
+                                                            { value: "+232", label: "🇸🇱 +232" },
+                                                            { value: "+65", label: "🇸🇬 +65" },
+                                                            { value: "+421", label: "🇸🇰 +421" },
+                                                            { value: "+386", label: "🇸🇮 +386" },
+                                                            { value: "+252", label: "🇸🇴 +252" },
+                                                            { value: "+27", label: "🇿🇦 +27" },
+                                                            { value: "+82", label: "🇰🇷 +82" },
+                                                            { value: "+211", label: "🇸🇸 +211" },
+                                                            { value: "+34", label: "🇪🇸 +34" },
+                                                            { value: "+94", label: "🇱🇰 +94" },
+                                                            { value: "+249", label: "🇸🇩 +249" },
+                                                            { value: "+597", label: "🇸🇷 +597" },
+                                                            { value: "+268", label: "🇸🇿 +268" },
+                                                            { value: "+46", label: "🇸🇪 +46" },
+                                                            { value: "+41", label: "🇨🇭 +41" },
+                                                            { value: "+963", label: "🇸🇾 +963" },
+                                                            { value: "+886", label: "🇹🇼 +886" },
+                                                            { value: "+992", label: "🇹🇯 +992" },
+                                                            { value: "+255", label: "🇹🇿 +255" },
+                                                            { value: "+66", label: "🇹🇭 +66" },
+                                                            { value: "+228", label: "🇹🇬 +228" },
+                                                            { value: "+216", label: "🇹🇳 +216" },
+                                                            { value: "+90", label: "🇹🇷 +90" },
+                                                            { value: "+993", label: "🇹🇲 +993" },
+                                                            { value: "+256", label: "🇺🇬 +256" },
+                                                            { value: "+380", label: "🇺🇦 +380" },
+                                                            { value: "+971", label: "🇦🇪 +971" },
+                                                            { value: "+44", label: "🇬🇧 +44" },
+                                                            { value: "+1", label: "🇺🇸 +1" },
+                                                            { value: "+598", label: "🇺🇾 +598" },
+                                                            { value: "+998", label: "🇺🇿 +998" },
+                                                            { value: "+58", label: "🇻🇪 +58" },
+                                                            { value: "+84", label: "🇻🇳 +84" },
+                                                            { value: "+967", label: "🇾🇪 +967" },
+                                                            { value: "+260", label: "🇿🇲 +260" },
+                                                            { value: "+263", label: "🇿🇼 +263" }
+                                                        ]}
+                                                        placeholder="Code"
+                                                    />
+                                                </div>
                                                 <Input
                                                     placeholder="Phone Number"
                                                     value={phoneNumber}
@@ -741,6 +1017,196 @@ const Wallet: React.FC = () => {
                 </div>
 
             </div>
+
+            {/* Top Up Modal */}
+            {showTopUpModal && (
+                <div className="modal-overlay" onClick={() => setShowTopUpModal(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                                <ArrowDownLeft size={24} style={{ color: '#4ade80' }} />
+                                Top Up Wallet
+                            </h2>
+                            <button onClick={() => setShowTopUpModal(false)} className="modal-close">×</button>
+                        </div>
+                        <div className="modal-body">
+                            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                                Add funds to your Z-Events wallet
+                            </p>
+
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Amount</label>
+                                <Input
+                                    type="number"
+                                    placeholder="Enter amount (₵)"
+                                    value={topUpAmount}
+                                    onChange={(e) => setTopUpAmount(e.target.value)}
+                                    style={{ fontSize: '1.1rem' }}
+                                />
+                            </div>
+
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Payment Method</label>
+                                {paymentMethods.length === 0 ? (
+                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                        No payment methods available. Please add one first.
+                                    </p>
+                                ) : (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        {paymentMethods.map(pm => (
+                                            <div
+                                                key={pm.id}
+                                                onClick={() => setSelectedPaymentMethod(pm.id)}
+                                                style={{
+                                                    padding: '1rem',
+                                                    border: selectedPaymentMethod === pm.id ? '2px solid var(--accent-color)' : '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    background: selectedPaymentMethod === pm.id ? 'rgba(99, 102, 241, 0.1)' : 'rgba(255,255,255,0.02)',
+                                                    transition: 'all 0.2s',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem'
+                                                }}
+                                            >
+                                                <div style={{
+                                                    background: 'rgba(99, 102, 241, 0.2)',
+                                                    padding: '0.75rem',
+                                                    borderRadius: '8px',
+                                                    color: 'var(--accent-color)'
+                                                }}>
+                                                    {pm.kind === 'Card' ? <CreditCard size={20} /> : <Smartphone size={20} />}
+                                                </div>
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{pm.provider || pm.kind}</div>
+                                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{pm.label}</div>
+                                                </div>
+                                                {selectedPaymentMethod === pm.id && (
+                                                    <div style={{ color: 'var(--accent-color)', fontWeight: 600 }}>✓</div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                <Button variant="outline" onClick={() => setShowTopUpModal(false)} style={{ flex: 1 }}>
+                                    Cancel
+                                </Button>
+                                <Button variant="primary" onClick={processTopUp} style={{ flex: 1 }}>
+                                    Add Funds
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Withdraw Modal */}
+            {showWithdrawModal && (
+                <div className="modal-overlay" onClick={() => setShowWithdrawModal(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                                <ArrowUpRight size={24} style={{ color: '#f87171' }} />
+                                Withdraw Funds
+                            </h2>
+                            <button onClick={() => setShowWithdrawModal(false)} className="modal-close">×</button>
+                        </div>
+                        <div className="modal-body">
+                            <div style={{
+                                background: 'rgba(99, 102, 241, 0.1)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                marginBottom: '1.5rem',
+                                border: '1px solid rgba(99, 102, 241, 0.2)'
+                            }}>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                                    Available Balance: <strong style={{ color: '#4ade80', fontSize: '1.1rem' }}>₵{balance.toFixed(2)}</strong>
+                                </p>
+                            </div>
+
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Amount</label>
+                                <Input
+                                    type="number"
+                                    placeholder="Enter amount (₵)"
+                                    value={withdrawAmount}
+                                    onChange={(e) => setWithdrawAmount(e.target.value)}
+                                    style={{ fontSize: '1.1rem' }}
+                                />
+                            </div>
+
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Withdraw To</label>
+                                {paymentMethods.length === 0 ? (
+                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                        No payment methods available. Please add one first.
+                                    </p>
+                                ) : (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        {paymentMethods.map(pm => (
+                                            <div
+                                                key={pm.id}
+                                                onClick={() => setSelectedPaymentMethod(pm.id)}
+                                                style={{
+                                                    padding: '1rem',
+                                                    border: selectedPaymentMethod === pm.id ? '2px solid var(--accent-color)' : '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    background: selectedPaymentMethod === pm.id ? 'rgba(99, 102, 241, 0.1)' : 'rgba(255,255,255,0.02)',
+                                                    transition: 'all 0.2s',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem'
+                                                }}
+                                            >
+                                                <div style={{
+                                                    background: 'rgba(99, 102, 241, 0.2)',
+                                                    padding: '0.75rem',
+                                                    borderRadius: '8px',
+                                                    color: 'var(--accent-color)'
+                                                }}>
+                                                    {pm.kind === 'Card' ? <CreditCard size={20} /> : pm.kind === 'Bank' ? <Landmark size={20} /> : <Smartphone size={20} />}
+                                                </div>
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{pm.provider || pm.kind}</div>
+                                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{pm.label}</div>
+                                                </div>
+                                                {selectedPaymentMethod === pm.id && (
+                                                    <div style={{ color: 'var(--accent-color)', fontWeight: 600 }}>✓</div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div style={{
+                                background: 'rgba(245, 158, 11, 0.1)',
+                                padding: '1rem',
+                                borderRadius: '12px',
+                                marginBottom: '1.5rem',
+                                border: '1px solid rgba(245, 158, 11, 0.2)'
+                            }}>
+                                <p style={{ fontSize: '0.8rem', color: '#fbbf24', margin: 0 }}>
+                                    ⏱️ Withdrawals typically take 1-3 business days to process
+                                </p>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                <Button variant="outline" onClick={() => setShowWithdrawModal(false)} style={{ flex: 1 }}>
+                                    Cancel
+                                </Button>
+                                <Button variant="primary" onClick={processWithdraw} style={{ flex: 1 }}>
+                                    Withdraw
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -10,7 +10,6 @@ import {
     FaSignOutAlt,
     FaTimes
 } from 'react-icons/fa';
-import { IoWalletOutline } from 'react-icons/io5';
 import './Sidebar.css';
 
 interface SidebarProps {
@@ -40,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <aside className={`sidebar ${isOpen ? 'active' : ''}`}>
                 <div className="sidebar-header">
                     <div className="sidebar-logo">
-                        <IoWalletOutline className="logo-icon" />
+                        <img src="/apple-touch-icon.png" alt="Z-Events Logo" className="logo-img" />
                         <span className="logo-text">Z-Events</span>
                     </div>
                     <button className="close-btn" onClick={onClose}>

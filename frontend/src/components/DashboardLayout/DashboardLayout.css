@@ -15,8 +15,10 @@
 }
 
 .dashboard-content {
-    padding: 2rem;
+    padding: 2rem 0;
+    /* Zero horizontal padding */
     flex: 1;
+    width: 100%;
 }
 
 /* Mobile Header */

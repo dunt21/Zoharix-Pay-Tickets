@@ -277,7 +277,7 @@ const TicketsBookings: React.FC = () => {
     setIssuedTickets((prev) =>
       prev.map((t) =>
         t.id.toLowerCase() === scanCode.trim().toLowerCase() ||
-        t.email.toLowerCase() === scanCode.trim().toLowerCase()
+          t.email.toLowerCase() === scanCode.trim().toLowerCase()
           ? { ...t, status: 'Checked In', time: new Date().toLocaleTimeString() }
           : t,
       ),
@@ -675,7 +675,7 @@ const TicketsBookings: React.FC = () => {
               <Button
                 variant="outline"
                 onClick={() => {
-                  navigator.clipboard.writeText(selectedTicket.code).catch(() => {});
+                  navigator.clipboard.writeText(selectedTicket.code).catch(() => { });
                 }}
               >
                 Copy Code

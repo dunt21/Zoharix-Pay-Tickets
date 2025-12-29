@@ -60,9 +60,10 @@
     font-size: 1.25rem;
 }
 
-.sidebar-logo .logo-icon {
-    font-size: 1.75rem;
-    color: var(--primary-color);
+.sidebar-logo .logo-img {
+    height: 32px;
+    width: auto;
+    border-radius: 8px;
 }
 
 .close-btn {
