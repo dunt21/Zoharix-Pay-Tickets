@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { FaBars } from 'react-icons/fa';
+import { LayoutDashboard } from 'lucide-react';
 import Sidebar from '../Sidebar/Sidebar';
 import './DashboardLayout.css';
 
@@ -21,9 +21,12 @@ const DashboardLayout: React.FC = () => {
             <div className="dashboard-main">
                 {/* Mobile Header */}
                 <div className="dashboard-mobile-header">
-                    <span className="mobile-title">Z-Events</span>
+                    <div className="sidebar-logo" style={{ padding: 0 }}>
+                        <img src="/apple-touch-icon.png" alt="Z-Events Logo" className="logo-img" style={{ width: '32px', height: '32px' }} />
+                        <span className="logo-text" style={{ fontSize: '1.2rem' }}>Z-Events</span>
+                    </div>
                     <button className="menu-toggle" onClick={toggleSidebar}>
-                        <FaBars />
+                        <LayoutDashboard size={24} />
                     </button>
                 </div>
 

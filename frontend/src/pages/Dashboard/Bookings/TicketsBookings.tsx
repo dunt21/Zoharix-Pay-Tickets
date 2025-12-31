@@ -11,6 +11,7 @@ import {
   MoreVertical,
   CheckCircle2,
   XCircle,
+  Ticket
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
@@ -391,8 +392,11 @@ const TicketsBookings: React.FC = () => {
     <div className="bookings-container">
       {/* Header */}
       <header className="bookings-header">
-        <div>
-          <h1 className="bookings-title">Tickets & Bookings</h1>
+        <div className="bookings-header-content">
+          <h1 className="bookings-title">
+            <Ticket size={28} style={{ color: 'var(--accent-color, #8b5cf6)' }} />
+            Tickets & Bookings
+          </h1>
           <p className="bookings-subtitle">Manage your event access and service appointments.</p>
         </div>
 

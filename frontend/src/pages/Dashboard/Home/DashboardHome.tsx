@@ -13,6 +13,7 @@ import {
   Star,
   Activity,
   Zap,
+  CheckSquare,
   MoreHorizontal
 } from "lucide-react";
 import Button from "../../../components/Button/Button";
@@ -73,9 +74,9 @@ const DashboardHome: React.FC = () => {
       {/* --- Header --- */}
       <header className="dashboard-header">
         <div>
-          <h1 className="dashboard-title">
+          <h1 className="dashboard-title" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <LayoutDashboard size={28} className="brand-icon" style={{ color: 'var(--accent-color)' }} />
-            Dashboard
+            Z-Events Dashboard
           </h1>
           <p className="dashboard-subtitle">
             Welcome back, <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Zoharix Tech</span>. You have 3 pending tasks.
@@ -178,7 +179,9 @@ const DashboardHome: React.FC = () => {
         <div className="section-card no-padding overflow-hidden">
           <div className="section-header padded">
             <div>
-              <h3 className="section-title">Recent Activity</h3>
+              <h3 className="section-title">
+                <Activity size={20} /> Recent Activity
+              </h3>
               <p className="section-desc">Real-time updates from your automated system</p>
             </div>
             <div className="tabs-pill">
@@ -188,28 +191,45 @@ const DashboardHome: React.FC = () => {
             </div>
           </div>
 
-          <div className="activity-list padded-bottom">
-            {filteredActivity.length > 0 ? filteredActivity.map((item) => (
-              <div key={item.id} className="activity-item">
-                <div className="activity-info">
-                  <div className={`activity-icon type-${item.type.toLowerCase()}`}>
-                    {item.type === 'Booking' ? <Ticket size={18} /> :
-                      item.type === 'Service' ? <Users size={18} /> :
-                        item.type === 'Payout' ? <TrendingUp size={18} /> :
-                          <Activity size={18} />}
-                  </div>
-                  <div className="activity-details">
-                    <h4>{item.title} <span className="time-display">{item.time}</span></h4>
-                    <p>{item.user} — {item.status}</p>
-                  </div>
-                </div>
-                <div className="amount-box">
-                  <div className="activity-amt">{item.amount}</div>
-                </div>
-              </div>
-            )) : <div className="empty-state">No activity found for this filter.</div>}
+          <div className="activity-scroll-wrapper">
+            <table className="activity-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Customer</th>
+                  <th>Status</th>
+                  <th>Time</th>
+                  <th className="text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredActivity.length > 0 ? filteredActivity.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <div className="activity-info-cell">
+                        <div className={`activity-icon-mini type-${item.type.toLowerCase()}`}>
+                          {item.type === 'Booking' ? <Ticket size={14} /> :
+                            item.type === 'Service' ? <Users size={14} /> :
+                              item.type === 'Payout' ? <TrendingUp size={14} /> :
+                                <Activity size={14} />}
+                        </div>
+                        <span className="activity-main-title">{item.title}</span>
+                      </div>
+                    </td>
+                    <td><span className="activity-user-text">{item.user}</span></td>
+                    <td><span className={`status-pill-mini ${item.status}`}>{item.status}</span></td>
+                    <td><span className="time-text-cell">{item.time}</span></td>
+                    <td className="text-right"><span className="activity-amt-cell">{item.amount}</span></td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={5} className="empty-table-state">No activity found for this filter.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
 
-            <div className="view-all-row">
+            <div className="view-all-row padded-x">
               <Button variant="ghost" style={{ width: '100%', fontSize: '0.9rem' }}>View Full History</Button>
             </div>
           </div>
@@ -236,7 +256,9 @@ const DashboardHome: React.FC = () => {
           {/* Reminders List */}
           <div className="section-card simplified">
             <div className="section-header small-mb">
-              <h3 className="section-title">Upcoming Tasks</h3>
+              <h3 className="section-title">
+                <CheckSquare size={20} /> Upcoming Tasks
+              </h3>
               <div className="badge-count">3</div>
             </div>
             <div className="task-list">

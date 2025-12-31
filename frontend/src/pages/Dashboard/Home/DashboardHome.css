@@ -46,10 +46,11 @@
 
 @media (max-width: 768px) {
     .dashboard-title {
-        font-size: 2.25rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: nowrap;
     }
 }
 
@@ -292,6 +293,16 @@
 }
 
 /* Sections */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
 .section-card {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 16px;
@@ -348,77 +359,132 @@
 }
 
 /* Activity List PRO */
-.activity-list.padded-bottom {
-    padding: 0 1.5rem 1.5rem 1.5rem;
+.activity-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
-.activity-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 0;
+.activity-scroll-wrapper::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+}
+
+/* Activity Table PRO */
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.activity-table th {
+    text-align: left;
+    padding: 1rem 1.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.activity-item:last-child {
+.activity-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    vertical-align: middle;
+}
+
+.activity-table tr:last-child td {
     border-bottom: none;
 }
 
-.activity-info {
+.activity-info-cell {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
-.activity-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+.activity-icon-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
 }
 
-.activity-icon.type-booking {
+.activity-icon-mini.type-booking {
     color: #ec4899;
     background: rgba(236, 72, 153, 0.1);
 }
 
-.activity-icon.type-payout {
+.activity-icon-mini.type-service {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.activity-icon-mini.type-payout {
     color: #22c55e;
     background: rgba(34, 197, 94, 0.1);
 }
 
-.activity-details h4 {
-    font-size: 0.9rem;
+.activity-main-title {
     color: var(--text-primary);
-    margin-bottom: 0.2rem;
     font-weight: 500;
 }
 
-.time-display {
+.activity-user-text {
     color: var(--text-secondary);
+}
+
+.status-pill-mini {
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
     font-size: 0.75rem;
-    font-weight: 400;
-    margin-left: 0.5rem;
+    font-weight: 500;
+    text-transform: capitalize;
 }
 
-.activity-details p {
-    font-size: 0.8rem;
+.status-pill-mini.confirmed {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.status-pill-mini.pending {
+    background: rgba(234, 179, 8, 0.1);
+    color: #eab308;
+}
+
+.time-text-cell {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.activity-amt-cell {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.text-right {
+    text-align: right;
+}
+
+.empty-table-state {
+    text-align: center;
+    padding: 3rem !important;
     color: var(--text-secondary);
 }
 
-.activity-amt {
-    font-weight: 600;
-    font-size: 0.9rem;
+.padded-x {
+    padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .view-all-row {
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 0;
 }
 
 /* AI Insights Card */
@@ -624,5 +690,11 @@
     .q-action-btn {
         padding: 0.75rem 1.25rem;
         font-size: 0.95rem;
+    }
+
+    /* Mobile Activity Table Adjustment */
+    .activity-table {
+        min-width: 650px;
+        /* Force minimum width for table alignment */
     }
 }

@@ -32,29 +32,13 @@
     gap: 1rem;
 }
 
-.tabs-pill {
+.analytics-toolbar {
     display: flex;
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 4px;
-    border: 1px solid var(--border-color);
-}
-
-.tab-item {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 500;
-}
-
-.tab-item.active {
-    background: var(--primary-color);
-    color: white;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+    gap: 1.5rem;
 }
 
 .analytics-content {
@@ -212,6 +196,23 @@
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-secondary);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
 .top-event-row:nth-child(1) .rank {

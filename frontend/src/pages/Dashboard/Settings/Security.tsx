@@ -42,6 +42,16 @@ const Security: React.FC = () => {
 
     return (
         <div className="security-container">
+            <header className="dashboard-header" style={{ marginBottom: '2.5rem' }}>
+                <div>
+                    <h1 className="dashboard-title" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <FaShieldAlt style={{ fontSize: '28px', color: 'var(--accent-color, #8b5cf6)' }} />
+                        Security & Privacy
+                    </h1>
+                    <p className="dashboard-subtitle">Manage your account security and active sessions.</p>
+                </div>
+            </header>
+
             {/* Password Section */}
             <section className="security-section">
                 <div className="section-header">

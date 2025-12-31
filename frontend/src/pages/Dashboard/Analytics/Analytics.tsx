@@ -12,8 +12,10 @@ import {
     MoreHorizontal,
     Search,
     Bell,
+    Star
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
+import Select from '../../../components/Select/Select';
 import './Analytics.css';
 
 
@@ -114,12 +116,6 @@ const PeakTimesVisual = () => (
 const Analytics: React.FC = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [error, setError] = useState<string | null>(null);
-    const [visibleWidgets, setVisibleWidgets] = useState({
-        overview: true,
-        audience: true,
-        revenue: true,
-        events: true
-    });
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
     const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -211,7 +207,9 @@ const Analytics: React.FC = () => {
 
                     <div className="section-card padded">
                         <div className="section-header small-mb">
-                            <h3 className="section-title">Top Performing Events</h3>
+                            <h3 className="section-title">
+                                <Star size={20} /> Top Performing Events
+                            </h3>
                             <Button variant="ghost" style={{ fontSize: '0.85rem' }}>View All</Button>
                         </div>
                         <div className="top-events-list">
@@ -247,7 +245,9 @@ const Analytics: React.FC = () => {
                 <div className="right-col sidebar-flex">
                     <div className="section-card simplified center-content">
                         <div className="section-header small-mb" style={{ width: '100%' }}>
-                            <h3 className="section-title">Audience</h3>
+                            <h3 className="section-title">
+                                <Users size={20} /> Audience
+                            </h3>
                             <MoreHorizontal size={18} color="var(--text-secondary)" />
                         </div>
                         <DonutChartVisual />
@@ -622,9 +622,9 @@ const Analytics: React.FC = () => {
             {/* --- Header (Consistent with Home) --- */}
             <header className="dashboard-header">
                 <div>
-                    <h1 className="dashboard-title">
-                        <Activity size={28} style={{ color: '#8b5cf6' }} />
-                        Analytics
+                    <h1 className="dashboard-title" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <TrendingUp size={28} style={{ color: '#8b5cf6' }} />
+                        Business Analytics
                     </h1>
                     <p className="dashboard-subtitle">
                         Deep dive into your <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Performance</span>.
@@ -642,16 +642,19 @@ const Analytics: React.FC = () => {
 
             {/* --- Toolbar --- */}
             <div className="analytics-toolbar">
-                <div className="tabs-pill">
-                    {['Overview', 'Audience', 'Revenue', 'Events'].map(tab => (
-                        <button
-                            key={tab}
-                            className={`tab-item ${activeTab === tab.toLowerCase() ? 'active' : ''} ${!visibleWidgets[tab.toLowerCase() as keyof typeof visibleWidgets] ? 'hidden' : ''}`}
-                            onClick={() => setActiveTab(tab.toLowerCase())}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+                <div style={{ minWidth: '240px' }}>
+                    <Select
+                        value={activeTab}
+                        onChange={(val) => setActiveTab(val)}
+                        options={[
+                            { value: 'overview', label: 'Overview' },
+                            { value: 'audience', label: 'Audience' },
+                            { value: 'revenue', label: 'Revenue' },
+                            { value: 'events', label: 'Events' }
+                        ]}
+                        icon={<TrendingUp size={18} />}
+                        placeholder="Switch View"
+                    />
                 </div>
                 <div className="toolbar-actions">
                     {/* Filters Removed */}

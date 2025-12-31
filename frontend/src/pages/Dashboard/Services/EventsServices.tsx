@@ -23,7 +23,6 @@ import Input from '../../../components/Input/Input';
 import Select from '../../../components/Select/Select';
 import NumberStepper from '../../../components/NumberStepper/NumberStepper';
 import AppAlert from '../../../components/AppAlert/AppAlert';
-import { jsPDF } from 'jspdf';
 import './EventsServices.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,8 +40,8 @@ interface ManagedItem {
     date?: string;
     duration?: string;
     location?: string;
-    price: string;
-    status: string;
+    price?: string;
+    status?: string;
     sold?: number;
     time?: string;
     total?: number | null;
@@ -53,8 +52,7 @@ interface ManagedItem {
     isUserCreated?: boolean;
 }
 
-// ... Mock Data ...
-const EXPLORE_ITEMS = [
+const EXPLORE_ITEMS: ManagedItem[] = [
     {
         id: 101,
         type: 'event',
@@ -64,7 +62,6 @@ const EXPLORE_ITEMS = [
         price: '₵150',
         imageBg: 'linear-gradient(45deg, #FF0099, #493240)',
         category: 'Party',
-        spots: 'Limited',
         ticketType: 'Paid (Scanning)'
     },
     {
@@ -87,7 +84,6 @@ const EXPLORE_ITEMS = [
         price: '₵300',
         imageBg: 'linear-gradient(45deg, #00F260, #0575E6)',
         category: 'Tech',
-        spots: 'Open',
         ticketType: 'Paid (Scanning)'
     },
     {
@@ -102,6 +98,14 @@ const EXPLORE_ITEMS = [
         ticketType: 'Paid (Standard)'
     }
 ];
+
+const MANAGED_ITEMS: ManagedItem[] = [
+    { id: 301, type: 'event', title: 'Neon Nights Festival', date: 'Dec 24, 2025', location: 'Grand Arena', price: '₵150', status: 'Active', sold: 450, total: 1000 },
+    { id: 302, type: 'service', title: 'Haircut & Beard Trim', duration: '45 mins', price: '₵80', category: 'Grooming', status: 'Active', sold: 12, total: null },
+    { id: 303, type: 'event', title: 'Tech Start Summit', date: 'Jan 15, 2026', location: 'Kempinski', price: 'Free', status: 'Draft', sold: 0, total: 200 },
+];
+
+
 
 const HISTORY_ITEMS = [
     {
@@ -133,11 +137,7 @@ const HISTORY_ITEMS = [
     }
 ];
 
-const MANAGED_ITEMS: ManagedItem[] = [
-    { id: 301, type: 'event', title: 'Neon Nights Festival', date: 'Dec 24, 2025', location: 'Grand Arena', price: '₵150', status: 'Active', sold: 450, total: 1000 },
-    { id: 302, type: 'service', title: 'Haircut & Beard Trim', duration: '45 mins', price: '₵80', category: 'Grooming', status: 'Active', sold: 12, total: null },
-    { id: 303, type: 'event', title: 'Tech Start Summit', date: 'Jan 15, 2026', location: 'Kempinski', price: 'Free', status: 'Draft', sold: 0, total: 200 },
-];
+
 
 const EventsServices: React.FC = () => {
     const [activeTab, setActiveTab] = useState<Tab>('explore');
@@ -146,17 +146,16 @@ const EventsServices: React.FC = () => {
     const [filterCategory, setFilterCategory] = useState<Category>('all');
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Managed Items State based on Mock Data
-    // Unified State for all items
     const [allEvents, setAllEvents] = useState<ManagedItem[]>([
-        ...EXPLORE_ITEMS.map(item => ({ ...item, status: 'Active', sold: 0, total: 100 })),
+        ...EXPLORE_ITEMS,
         ...MANAGED_ITEMS.map(item => ({ ...item, isUserCreated: true }))
     ]);
-    const [historyItems, setHistoryItems] = useState(HISTORY_ITEMS);
+    const [historyItems, setHistoryItems] = useState<any[]>(HISTORY_ITEMS);
     const navigate = useNavigate();
-    // Detail Alert State
+
     const [detailItem, setDetailItem] = useState<ManagedItem | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+
 
     // Modal & Form State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -189,55 +188,8 @@ const EventsServices: React.FC = () => {
     const [bookingSuccess, setBookingSuccess] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [bookedIds, setBookedIds] = useState<number[]>([]);
-    const [isDownloading, setIsDownloading] = useState(false);
 
-    const handleDownloadTicket = async () => {
-        if (!ticketRef.current || !bookingItem) return;
 
-        setIsDownloading(true);
-        try {
-            const { toPng } = await import('html-to-image');
-
-            // Ensure images are loaded
-            const images = ticketRef.current.getElementsByTagName('img');
-            await Promise.all(
-                Array.from(images).map(img => {
-                    if (img.complete) return Promise.resolve();
-                    return new Promise((resolve) => {
-                        img.onload = resolve;
-                        img.onerror = resolve;
-                    });
-                })
-            );
-
-            const dataUrl = await toPng(ticketRef.current, {
-                pixelRatio: 3,
-                backgroundColor: '#000000',
-                cacheBust: true,
-                style: {
-                    borderRadius: '0',
-                }
-            });
-
-            const img = new Image();
-            img.src = dataUrl;
-            await new Promise(resolve => { img.onload = resolve; });
-
-            const pdf = new jsPDF({
-                orientation: img.width > img.height ? 'l' : 'p',
-                unit: 'px',
-                format: [img.width / 3, img.height / 3],
-            });
-
-            pdf.addImage(dataUrl, 'PNG', 0, 0, img.width / 3, img.height / 3);
-            pdf.save(`${bookingItem.title.replace(/\s+/g, '_')}_Ticket.pdf`);
-        } catch (error) {
-            console.error('High-fidelity PDF generation failure:', error);
-            alert("Something went wrong with the high-fidelity download. Please try again.");
-        } finally {
-            setIsDownloading(false);
-        }
-    };
 
     const handleBook = (item: any) => {
         setBookingItem(item);
@@ -314,7 +266,7 @@ const EventsServices: React.FC = () => {
 
     const confirmDelete = () => {
         if (deleteAlert.itemId !== null) {
-            setAllEvents(prev => prev.filter(item => item.id !== deleteAlert.itemId));
+            setAllEvents((prev: ManagedItem[]) => prev.filter(item => item.id !== deleteAlert.itemId));
         }
         setDeleteAlert({ isOpen: false, itemId: null });
     };
@@ -328,11 +280,11 @@ const EventsServices: React.FC = () => {
 
         if (editingItem) {
             // Update
-            setAllEvents(prev => prev.map(item =>
+            setAllEvents((prev: ManagedItem[]) => prev.map(item =>
                 item.id === editingItem.id ? {
                     ...item,
                     ...formData,
-                    total: formData.total ? parseInt(formData.total as string) : item.total,
+                    total: formData.total ? parseInt(formData.total as string) : item.total as number,
                     ...(formData.type === 'service' ? { duration: formData.date } : { date: formData.date })
                 } : item
             ));
@@ -347,7 +299,7 @@ const EventsServices: React.FC = () => {
                 ...(formData.type === 'service' ? { duration: formData.date } : { date: formData.date }),
                 imageBg: formData.type === 'event' ? 'linear-gradient(45deg, #8b5cf6, #6366f1)' : 'linear-gradient(135deg, #a78bfa, #8b5cf6)'
             };
-            setAllEvents(prev => [newItem, ...prev]);
+            setAllEvents((prev: ManagedItem[]) => [newItem, ...prev]);
         }
         setIsModalOpen(false);
     };
@@ -465,7 +417,7 @@ const EventsServices: React.FC = () => {
                         <div className="placeholder-img" style={{ background: item.imageBg }}>
                             <ImageIcon size={32} color="rgba(255,255,255,0.2)" />
                         </div>
-                        <span className={`status-tag ${item.status.toLowerCase()}`}>{item.status}</span>
+                        <span className={`status-tag ${(item.status || 'Active').toLowerCase()}`}>{item.status || 'Active'}</span>
                     </div>
                     <div className="es-card-content">
                         <div className="es-card-header">
@@ -534,7 +486,10 @@ const EventsServices: React.FC = () => {
             {/* Header */}
             <header className="es-header">
                 <div className="es-header-content">
-                    <h1 className="es-title">Events & Services</h1>
+                    <h1 className="es-title" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <Calendar size={28} style={{ color: 'var(--accent-color, #8b5cf6)' }} />
+                        Events & Services
+                    </h1>
                     <p className="es-subtitle">Explore upcoming experiences or manage your bookings.</p>
                 </div>
                 <div className="es-header-actions">
@@ -906,16 +861,14 @@ const EventsServices: React.FC = () => {
                                 <p className="ticket-footer-text">Present this at the venue</p>
                             </div>
                         )}
-                        const navigate = useNavigate()
+
                         <div className="ticket-download-section">
                             <Button
                                 variant="outline"
                                 className="download-btn-full"
                                 onClick={() => navigate('/dashboard/bookings')}
-                                disabled={isDownloading}
-
                             >
-                                {isDownloading ? "Preparing your seat..." : "Navigate to Bookings and Tickets"}
+                                Navigate to Bookings and Tickets
                             </Button>
                         </div>
                     </div>

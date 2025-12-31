@@ -16,7 +16,9 @@ import {
     ChevronDown,
     FileText,
     FileSpreadsheet,
-    File
+    File,
+    History,
+    Zap
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
@@ -559,7 +561,9 @@ const Wallet: React.FC = () => {
 
                 {/* Quick Actions */}
                 <div className="actions-card">
-                    <h3 className="section-title" style={{ marginBottom: '0.5rem' }}>Quick Actions</h3>
+                    <h3 className="section-title">
+                        <Zap size={20} /> Quick Actions
+                    </h3>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
                         Manage your funds easily
                     </p>
@@ -590,7 +594,9 @@ const Wallet: React.FC = () => {
                 <div className="section-card">
                     <div className="section-header">
                         <div>
-                            <h3 className="section-title">Transaction History</h3>
+                            <h3 className="section-title">
+                                <History size={20} /> Transaction History
+                            </h3>
                             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
                                 Recent activity on your account
                             </p>
@@ -650,7 +656,9 @@ const Wallet: React.FC = () => {
                     {/* Payment Methods */}
                     <div className="section-card" style={{ marginBottom: 0 }}>
                         <div className="section-header" style={{ marginBottom: '1rem' }}>
-                            <h3 className="section-title">Payment Methods</h3>
+                            <h3 className="section-title">
+                                <CreditCard size={20} /> Payment Methods
+                            </h3>
                             <button
                                 onClick={() => setIsAdding(!isAdding)}
                                 style={{
