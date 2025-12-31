@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaGoogle, FaUser, FaEnvelope } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaUser, FaEnvelope } from 'react-icons/fa';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
@@ -116,10 +116,7 @@ const SignUp: React.FC = () => {
         }
     };
 
-    const handleSocialLogin = (provider: string) => {
-        // TODO: Implement social login
-        console.log(`Signup with ${provider}`);
-    };
+
 
     return (
         <div className="auth-form-wrapper">
@@ -230,24 +227,6 @@ const SignUp: React.FC = () => {
                     {isLoading ? 'Creating Account...' : 'Create Account'}
                 </Button>
             </form>
-
-            <div className="auth-divider">
-                <span>or continue with</span>
-            </div>
-
-            <div className="social-login">
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="btn-social full-width"
-                    onClick={() => handleSocialLogin('google')}
-                    icon={<FaGoogle />}
-                >
-                    Google
-                </Button>
-
-
-            </div>
 
             <p className="auth-footer-text">
                 Already have an account? <Link to="/login">Log In</Link>

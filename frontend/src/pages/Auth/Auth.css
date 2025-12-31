@@ -2,6 +2,19 @@
     width: 100%;
     max-width: 440px;
     margin: 0 auto;
+    animation: auth-slide-up 0.5s ease-out;
+}
+
+@keyframes auth-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .auth-title-section {
@@ -246,5 +259,40 @@
 
     .auth-title-section h1 {
         font-size: 1.75rem;
+    }
+}
+
+/* Success State Styles */
+.auth-success-state {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.success-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.success-checkmark {
+    font-size: 5rem;
+    color: var(--primary-color);
+    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4));
+    animation: checkmark-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes checkmark-pop {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
     }
 }

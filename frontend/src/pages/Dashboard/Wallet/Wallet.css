@@ -1,9 +1,11 @@
 /* Wallet.css */
 .wallet-container {
-  padding: 1rem;
+  padding: 0 4rem 4rem 4rem;
+  /* Consistent dashboard breathing room */
   min-height: calc(100vh - 100px);
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
 }
 
 .wallet-header {
@@ -393,19 +395,21 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .wallet-container {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .wallet-container {
+    padding: 1.5rem 1rem;
+  }
+}
+
 @media (max-width: 480px) {
   .wallet-container {
-    padding: 0.75rem;
-  }
-
-  .wallet-title {
-    font-size: 1.5rem;
-  }
-
-  /* Compact Table for really small screens */
-  .transactions-table th:nth-child(2),
-  .transactions-table td:nth-child(2) {
-    display: none;
+    padding: 1.25rem 0.75rem;
   }
 }
 

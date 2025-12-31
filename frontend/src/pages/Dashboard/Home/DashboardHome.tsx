@@ -157,18 +157,18 @@ const DashboardHome: React.FC = () => {
 
       {/* --- Actions Bar --- */}
       <div className="quick-actions-bar">
-        <button className="q-action-btn" onClick={() => navigate('/dashboard/events')}>
+        <button className="q-action-btn" onClick={() => navigate('/dashboard/services')}>
           <Plus size={18} /> New Event
         </button>
         <button className="q-action-btn secondary" onClick={() => navigate('/dashboard/bookings')}>
           <Ticket size={18} /> Bookings
         </button>
-        <button className="q-action-btn secondary">
+        <button className="q-action-btn secondary" onClick={() => navigate('/dashboard/analytics')}>
           <Activity size={18} /> Analytics
         </button>
-        <div style={{ marginLeft: 'auto' }}>
+        {/* <div style={{ marginLeft: 'auto' }}>
           <Button variant="ghost" style={{ fontSize: '0.9rem' }}>Customize Layout</Button>
-        </div>
+        </div> */}
       </div>
 
       {/* --- Main Content Grid --- */}

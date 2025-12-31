@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jsPDF } from 'jspdf';
 import {
   QrCode,
   CalendarCheck,
@@ -10,11 +11,10 @@ import {
   MoreVertical,
   CheckCircle2,
   XCircle,
-  Filter,
-  X,
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
+import AppAlert from '../../../components/AppAlert/AppAlert';
 import './TicketsBookings.css';
 
 // Types
@@ -45,25 +45,27 @@ type MyTicket = {
   code: string;
 };
 
-type IncomingBooking = {
-  id: string;
-  client: string;
-  service: string;
-  date: string;
-  time: string;
-  status: 'Pending' | 'Confirmed' | 'Rejected';
-  contact: string;
-};
-
 type MyBooking = {
   id: string;
   service: string;
   provider: string;
   date: string;
   time: string;
-  status: 'Pending' | 'Confirmed' | 'Rejected';
+  status: 'Pending' | 'Confirmed' | 'Rejected' | 'Reschedule Requested';
   price: string;
   image: string;
+  isRescheduling?: boolean;
+};
+
+type IncomingBooking = {
+  id: string;
+  client: string;
+  service: string;
+  date: string;
+  time: string;
+  status: 'Pending' | 'Confirmed' | 'Rejected' | 'Reschedule Requested';
+  contact: string;
+  price: string;
 };
 
 // Mock Data
@@ -170,39 +172,33 @@ const MY_BOOKINGS: MyBooking[] = [
 const INCOMING_BOOKINGS_DATA: IncomingBooking[] = [
   {
     id: 'ib1',
-    client: 'Michael K.',
-    service: 'Deep Tissue Massage',
-    date: 'Dec 08 2025',
-    time: '10:00 AM',
-    status: 'Pending',
-    contact: '054-xxx-xxxx',
+    client: 'Alinko Tech',
+    service: 'Professional Massage',
+    date: 'Dec 31, 2024',
+    time: '14:00',
+    status: 'Reschedule Requested',
+    contact: '054 123 4567',
+    price: '₵250',
   },
   {
     id: 'ib2',
-    client: 'Lisa A.',
-    service: 'Facial Treatment',
-    date: 'Dec 08 2025',
-    time: '11:30 AM',
-    status: 'Confirmed',
-    contact: '050-xxx-xxxx',
+    client: 'Sarah Mensah',
+    service: 'Haircut & Styling',
+    date: 'Jan 02, 2025',
+    time: '10:00',
+    status: 'Pending',
+    contact: '020 987 6543',
+    price: '₵120',
   },
   {
     id: 'ib3',
-    client: 'David B.',
-    service: 'Manicure',
-    date: 'Dec 09 2025',
-    time: '09:00 AM',
-    status: 'Rejected',
-    contact: '024-xxx-xxxx',
-  },
-  {
-    id: 'ib4',
-    client: 'Sarah M.',
-    service: 'Full Package',
-    date: 'Dec 09 2025',
-    time: '02:00 PM',
+    client: 'David Osei',
+    service: 'Wedding Photography',
+    date: 'Jan 12, 2025',
+    time: '08:00',
     status: 'Confirmed',
-    contact: '020-xxx-xxxx',
+    contact: '024 445 6677',
+    price: '₵1,500',
   },
 ];
 
@@ -215,6 +211,8 @@ const TicketsBookings: React.FC = () => {
 
   const [incomingBookings, setIncomingBookings] = useState(INCOMING_BOOKINGS_DATA);
   const [issuedTickets, setIssuedTickets] = useState(ISSUED_TICKETS_DATA);
+  const [myTickets] = useState(MY_TICKETS);
+  const [myBookings, setMyBookings] = useState(MY_BOOKINGS);
 
   // Modals
   const [scanModalOpen, setScanModalOpen] = useState(false);
@@ -227,6 +225,57 @@ const TicketsBookings: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<MyBooking | null>(null);
   const [newDate, setNewDate] = useState('');
   const [newTime, setNewTime] = useState('');
+  const [rescheduleSuccess, setRescheduleSuccess] = useState(false);
+
+  const ticketRef = useRef<HTMLDivElement>(null);
+
+  const handlePdfDownload = async () => {
+    if (!ticketRef.current || !selectedTicket) return;
+
+    try {
+      const { toPng } = await import('html-to-image');
+
+      // Ensure images are loaded
+      const images = ticketRef.current.getElementsByTagName('img');
+      await Promise.all(
+        Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        })
+      );
+
+      const dataUrl = await toPng(ticketRef.current, {
+        pixelRatio: 3,
+        backgroundColor: '#000000',
+        cacheBust: true,
+        style: {
+          borderRadius: '0', // Ensure clean edges for PDF
+        }
+      });
+
+      const img = new Image();
+      img.src = dataUrl;
+
+      await new Promise(resolve => { img.onload = resolve; });
+
+      const pdf = new jsPDF({
+        orientation: img.width > img.height ? 'l' : 'p',
+        unit: 'px',
+        format: [img.width / 3, img.height / 3],
+      });
+
+      pdf.addImage(dataUrl, 'PNG', 0, 0, img.width / 3, img.height / 3);
+      pdf.save(`${selectedTicket.event.replace(/\s+/g, '_')}_Ticket.pdf`);
+
+      setTimeout(() => setTicketModalOpen(false), 500);
+    } catch (error) {
+      console.error('High-fidelity PDF generation failure:', error);
+      alert("Something went wrong with the high-fidelity download. Please try again.");
+    }
+  };
 
   const filteredTickets = useMemo(
     () =>
@@ -248,18 +297,36 @@ const TicketsBookings: React.FC = () => {
     [incomingBookings, searchTerm],
   );
 
-  // Actions
-  const handleApprove = (id: string) => {
-    setIncomingBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: 'Confirmed' } : b)),
-    );
+  // Business / Organizer Logic
+  const [actionModal, setActionModal] = useState<{
+    open: boolean;
+    type: 'approve' | 'reject' | 'confirm_reschedule';
+    id: string | null
+  }>({ open: false, type: 'approve', id: null });
+
+  const openActionModal = (type: 'approve' | 'reject' | 'confirm_reschedule', id: string) => {
+    setActionModal({ open: true, type, id });
   };
 
-  const handleReject = (id: string) => {
+  const confirmAction = () => {
+    if (!actionModal.id) return;
     setIncomingBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: 'Rejected' } : b)),
+      prev.map((b) => {
+        if (b.id === actionModal.id) {
+          if (actionModal.type === 'approve' || actionModal.type === 'confirm_reschedule') {
+            return { ...b, status: 'Confirmed' };
+          }
+          return { ...b, status: 'Rejected' };
+        }
+        return b;
+      })
     );
+    setActionModal({ open: false, type: 'approve', id: null });
   };
+
+  const handleApprove = (id: string) => openActionModal('approve', id);
+  const handleReject = (id: string) => openActionModal('reject', id);
+  const handleConfirmReschedule = (id: string) => openActionModal('confirm_reschedule', id);
 
   const openTicketModal = (ticket: MyTicket) => {
     setSelectedTicket(ticket);
@@ -295,9 +362,29 @@ const TicketsBookings: React.FC = () => {
   const confirmReschedule = () => {
     if (!selectedBooking) return;
     if (!newDate || !newTime) return;
-    // Simulate reschedule
-    setSelectedBooking((prev) => (prev ? { ...prev, date: newDate, time: newTime, status: 'Confirmed' } : prev));
-    setRescheduleModalOpen(false);
+
+    // Simulate real-world request process
+    setMyBookings((prev) =>
+      prev.map((b) =>
+        b.id === selectedBooking.id
+          ? {
+            ...b,
+            date: newDate,
+            time: newTime,
+            status: 'Pending',
+            isRescheduling: true // Internal flag for UI if needed
+          }
+          : b
+      )
+    );
+
+    // Optional: show a small toast or alert in a real app
+    setRescheduleSuccess(true);
+
+    setTimeout(() => {
+      setRescheduleModalOpen(false);
+      setRescheduleSuccess(false);
+    }, 2000);
   };
 
   return (
@@ -343,10 +430,10 @@ const TicketsBookings: React.FC = () => {
         viewMode === 'attendee' ? (
           // Customer Tickets Grid
           <div className="cards-grid">
-            {MY_TICKETS.map((ticket) => (
+            {myTickets.map((ticket) => (
               <div key={ticket.id} className="booking-card">
                 <div className="card-image-container">
-                  <img src={ticket.image} alt={ticket.event} className="card-image" />
+                  <img src={ticket.image} alt={ticket.event} className="card-image" crossOrigin="anonymous" />
                   <span className={`status-badge status-${ticket.status} card-overlay-badge`}>
                     {ticket.status}
                   </span>
@@ -455,12 +542,12 @@ const TicketsBookings: React.FC = () => {
       ) : viewMode === 'attendee' ? (
         // Customer Bookings
         <div className="cards-grid">
-          {MY_BOOKINGS.map((booking) => (
+          {myBookings.map((booking) => (
             <div key={booking.id} className="booking-card">
               <div className="card-image-container">
-                <img src={booking.image} alt={booking.service} className="card-image" />
+                <img src={booking.image} alt={booking.service} className="card-image" crossOrigin="anonymous" />
                 <span
-                  className={`status-badge status-${booking.status.toLowerCase()} card-overlay-badge`}
+                  className={`status-badge status-${booking.status.toLowerCase().replace(/\s+/g, '_')} ${booking.status === 'Pending' ? 'pulse-request' : ''} card-overlay-badge`}
                 >
                   {booking.status}
                 </span>
@@ -528,7 +615,7 @@ const TicketsBookings: React.FC = () => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button variant="outline" icon={<Filter size={16} />}>Filter</Button>
+            {/* Filter Removed */}
           </div>
 
           <div className="bookings-table-container">
@@ -557,46 +644,79 @@ const TicketsBookings: React.FC = () => {
                         </div>
                       </td>
                       <td>
-                        <span className={`status-badge status-${b.status.toLowerCase()}`}>{b.status}</span>
+                        <span className={`status-badge status-${b.status.toLowerCase().replace(/\s+/g, '_')} ${b.status === 'Reschedule Requested' ? 'pulse-request' : ''}`}>
+                          {b.status}
+                        </span>
                       </td>
-                      <td>{b.contact}</td>
+                      <td style={{ fontSize: '0.85rem' }}>{b.contact}</td>
                       <td>
-                        {b.status === 'Pending' ? (
-                          <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <button
-                              onClick={() => handleApprove(b.id)}
-                              style={{
-                                padding: '0.4rem',
-                                borderRadius: '8px',
-                                border: '1px solid rgba(34, 197, 94, 0.2)',
-                                background: 'rgba(34, 197, 94, 0.1)',
-                                color: '#4ade80',
-                                cursor: 'pointer',
-                              }}
-                              title="Approve"
-                            >
-                              <CheckCircle2 size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleReject(b.id)}
-                              style={{
-                                padding: '0.4rem',
-                                borderRadius: '8px',
-                                border: '1px solid rgba(239, 68, 68, 0.2)',
-                                background: 'rgba(239, 68, 68, 0.1)',
-                                color: '#f87171',
-                                cursor: 'pointer',
-                              }}
-                              title="Reject"
-                            >
-                              <XCircle size={16} />
-                            </button>
-                          </div>
-                        ) : (
-                          <Button variant="ghost" style={{ padding: '0.5rem' }}>
-                            <MoreVertical size={16} />
-                          </Button>
-                        )}
+                        <div style={{ display: 'flex', gap: '0.6rem' }}>
+                          {b.status === 'Reschedule Requested' ? (
+                            <>
+                              <button
+                                onClick={() => handleConfirmReschedule(b.id)}
+                                style={{
+                                  padding: '0.5rem',
+                                  borderRadius: '10px',
+                                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                                  background: 'rgba(139, 92, 246, 0.1)',
+                                  color: '#a78bfa',
+                                  cursor: 'pointer',
+                                }}
+                                title="Confirm Reschedule"
+                              >
+                                <CheckCircle2 size={18} />
+                              </button>
+                              <button
+                                onClick={() => handleReject(b.id)}
+                                style={{
+                                  padding: '0.5rem',
+                                  borderRadius: '10px',
+                                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                                  background: 'rgba(239, 68, 68, 0.05)',
+                                  color: '#f87171',
+                                  cursor: 'pointer',
+                                }}
+                                title="Reject"
+                              >
+                                <XCircle size={18} />
+                              </button>
+                            </>
+                          ) : b.status === 'Pending' ? (
+                            <>
+                              <button
+                                onClick={() => handleApprove(b.id)}
+                                style={{
+                                  padding: '0.5rem',
+                                  borderRadius: '10px',
+                                  border: '1px solid rgba(34, 197, 94, 0.2)',
+                                  background: 'rgba(34, 197, 94, 0.1)',
+                                  color: '#4ade80',
+                                  cursor: 'pointer',
+                                }}
+                                title="Approve"
+                              >
+                                <CheckCircle2 size={18} />
+                              </button>
+                              <button
+                                onClick={() => handleReject(b.id)}
+                                style={{
+                                  padding: '0.5rem',
+                                  borderRadius: '10px',
+                                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                                  background: 'rgba(239, 68, 68, 0.05)',
+                                  color: '#f87171',
+                                  cursor: 'pointer',
+                                }}
+                                title="Decline"
+                              >
+                                <XCircle size={18} />
+                              </button>
+                            </>
+                          ) : (
+                            <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>Processed</span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -614,146 +734,215 @@ const TicketsBookings: React.FC = () => {
       )}
 
       {/* Scan Modal */}
-      {scanModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3 className="modal-title">Scan or Enter Ticket Code</h3>
-              <button className="icon-btn" onClick={() => setScanModalOpen(false)}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="info-text">
-                For demo, enter an attendee email or ticket id (e.g. it2) to mark as Checked In.
-              </div>
-              <Input
-                placeholder="Enter ticket id or attendee email..."
-                value={scanCode}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setScanCode(e.target.value)}
-              />
-            </div>
-            <div className="modal-footer">
-              <Button variant="outline" onClick={() => setScanModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={confirmScan}>
-                Confirm
-              </Button>
-            </div>
-          </div>
+      <AppAlert
+        isOpen={scanModalOpen}
+        title="Scan or Enter Ticket Code"
+        message="For demo, enter an attendee email or ticket id (e.g. it2) to mark as Checked In."
+        confirmText="Confirm"
+        cancelText="Cancel"
+        onConfirm={confirmScan}
+        onCancel={() => setScanModalOpen(false)}
+        variant="info"
+      >
+        <div style={{ marginTop: '1rem' }}>
+          <Input
+            placeholder="Enter ticket id or attendee email..."
+            value={scanCode}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setScanCode(e.target.value)}
+          />
         </div>
-      )}
+      </AppAlert>
 
       {/* Ticket Modal */}
-      {ticketModalOpen && selectedTicket && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3 className="modal-title">Ticket Details</h3>
-              <button className="icon-btn" onClick={() => setTicketModalOpen(false)}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="ticket-preview">
-                <img src={selectedTicket.image} alt={selectedTicket.event} className="ticket-image" />
-                <div className="ticket-info">
-                  <h4 className="event-name">{selectedTicket.event}</h4>
-                  <div className="event-detail">
-                    <CalendarIcon size={14} /> {selectedTicket.date} • {selectedTicket.time}
-                  </div>
-                  <div className="event-detail">
-                    <MapPin size={14} /> {selectedTicket.location}
-                  </div>
-                  <div className="event-detail">Code: {selectedTicket.code}</div>
-                  <div className="event-detail">Type: {selectedTicket.type}</div>
-                </div>
+      <AppAlert
+        isOpen={ticketModalOpen && !!selectedTicket}
+        title="Ticket Details"
+        message=""
+        confirmText="Download"
+        cancelText="Copy Code"
+        onConfirm={handlePdfDownload}
+        onCancel={() => {
+          if (selectedTicket) {
+            navigator.clipboard.writeText(selectedTicket.code).catch(() => { });
+          }
+          setTicketModalOpen(false);
+        }}
+        variant="info"
+      >
+        {selectedTicket && (
+          <div className="ticket-preview" ref={ticketRef} style={{ background: '#000', borderRadius: '12px', padding: '1rem' }}>
+            <img
+              src={`${selectedTicket.image}&t=${Date.now()}`}
+              alt={selectedTicket.event}
+              className="ticket-image"
+              crossOrigin="anonymous"
+              style={{ borderRadius: '8px' }}
+            />
+            <div className="ticket-info">
+              <h4 className="event-name">{selectedTicket.event}</h4>
+              <div className="event-detail">
+                <CalendarIcon size={14} /> {selectedTicket.date} • {selectedTicket.time}
               </div>
-            </div>
-            <div className="modal-footer">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(selectedTicket.code).catch(() => { });
-                }}
-              >
-                Copy Code
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  // Placeholder download
-                  const blob = new Blob([`Ticket: ${selectedTicket.code}`], { type: 'text/plain' });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `${selectedTicket.event}-ticket.txt`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-              >
-                Download
-              </Button>
+              <div className="event-detail">
+                <MapPin size={14} /> {selectedTicket.location}
+              </div>
+              <div className="event-detail">Code: {selectedTicket.code}</div>
+              <div className="event-detail">Type: {selectedTicket.type}</div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </AppAlert>
 
       {/* Reschedule Modal */}
-      {rescheduleModalOpen && selectedBooking && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3 className="modal-title">Reschedule Appointment</h3>
-              <button className="icon-btn" onClick={() => setRescheduleModalOpen(false)}>
-                <X size={18} />
-              </button>
+      <AppAlert
+        isOpen={rescheduleModalOpen && !!selectedBooking}
+        title="Reschedule Appointment"
+        message="Request a new date and time. Your provider will be notified to confirm availability."
+        confirmText={rescheduleSuccess ? "" : "Send Request"}
+        cancelText={rescheduleSuccess ? "" : "Cancel"}
+        onConfirm={confirmReschedule}
+        onCancel={() => setRescheduleModalOpen(false)}
+        variant="info"
+        maxWidth="500px"
+      >
+        {selectedBooking && !rescheduleSuccess ? (
+          <div className="reschedule-modal-content" style={{ marginTop: '1.5rem', textAlign: 'left' }}>
+            <div className="current-details-box" style={{
+              padding: '1rem',
+              background: 'rgba(255,255,255,0.03)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255,255,255,0.05)',
+              marginBottom: '1.5rem'
+            }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Current Schedule</span>
+              <h4 style={{ color: '#fff', margin: '0.25rem 0 0.5rem 0', fontSize: '1rem' }}>{selectedBooking.service}</h4>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                <CalendarIcon size={14} color="#8b5cf6" />
+                <span>{selectedBooking.date} • {selectedBooking.time}</span>
+              </div>
             </div>
-            <div className="modal-body">
-              <div className="info-text">Select a new date and time for your booking.</div>
-              <div className="form-grid">
-                <div className="form-field">
-                  <label className="form-label">New Date</label>
+
+            <div className="reschedule-form" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
+              <div className="form-field">
+                <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>Proposed Date</label>
+                <div style={{ position: 'relative' }}>
                   <input
                     type="date"
                     className="form-input"
+                    style={{
+                      width: '100%',
+                      padding: '0.8rem 1rem',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(255,255,255,0.05)',
+                      color: 'white',
+                      fontSize: '0.95rem',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
                   />
                 </div>
-                <div className="form-field">
-                  <label className="form-label">New Time</label>
+              </div>
+              <div className="form-field">
+                <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>Proposed Time</label>
+                <div style={{ position: 'relative' }}>
                   <input
                     type="time"
                     className="form-input"
+                    style={{
+                      width: '100%',
+                      padding: '0.8rem 1rem',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(255,255,255,0.05)',
+                      color: 'white',
+                      fontSize: '0.95rem',
+                      outline: 'none'
+                    }}
                     value={newTime}
                     onChange={(e) => setNewTime(e.target.value)}
                   />
                 </div>
               </div>
-              <div className="summary-box">
-                <div>
-                  <div className="event-name" style={{ fontSize: '1rem' }}>
-                    {selectedBooking.service}
-                  </div>
-                  <div className="event-detail">
-                    <CalendarIcon size={12} /> {selectedBooking.date} • {selectedBooking.time}
-                  </div>
-                </div>
-              </div>
             </div>
-            <div className="modal-footer">
-              <Button variant="outline" onClick={() => setRescheduleModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={confirmReschedule}>
-                Confirm
-              </Button>
+
+            <div style={{
+              marginTop: '1.5rem',
+              padding: '0.75rem 1rem',
+              background: 'rgba(139, 92, 246, 0.05)',
+              borderRadius: '12px',
+              border: '1px solid rgba(139, 92, 246, 0.1)',
+              display: 'flex',
+              gap: '10px',
+              alignItems: 'start'
+            }}>
+              <Clock size={16} color="#8b5cf6" style={{ marginTop: '2px' }} />
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(139, 92, 246, 0.8)', lineHeight: '1.4' }}>
+                Confirmation will be sent to your email once the provider approves the new time slot.
+              </p>
             </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '2.5rem 1rem',
+            animation: 'fadeIn 0.4s ease-out'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              background: 'rgba(34, 197, 94, 0.1)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '1.5rem',
+              border: '2px solid rgba(34, 197, 94, 0.2)'
+            }}>
+              <CheckCircle2 size={32} color="#4ade80" />
+            </div>
+            <h3 style={{ color: '#fff', fontSize: '1.25rem', marginBottom: '0.5rem' }}>Request Sent!</h3>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', maxWidth: '300px' }}>
+              We've notified the service provider. You'll receive an email as soon as they confirm.
+            </p>
+          </div>
+        )}
+      </AppAlert>
+
+      {/* Global Action Confirm Alert */}
+      <AppAlert
+        isOpen={actionModal.open}
+        title={
+          actionModal.type === 'approve'
+            ? 'Confirm Appointment'
+            : actionModal.type === 'reject'
+              ? 'Reject Appointment'
+              : 'Confirm Reschedule'
+        }
+        message={
+          actionModal.type === 'approve'
+            ? 'Are you sure you want to confirm this booking?'
+            : actionModal.type === 'reject'
+              ? 'Are you sure you want to reject this booking? This action cannot be undone.'
+              : 'The client has requested a different time. Do you accept the new schedule?'
+        }
+        confirmText={
+          actionModal.type === 'approve'
+            ? 'Approve'
+            : actionModal.type === 'reject'
+              ? 'Reject'
+              : 'Accept Reschedule'
+        }
+        cancelText="Close"
+        onConfirm={confirmAction}
+        onCancel={() => setActionModal({ ...actionModal, open: false })}
+        variant={actionModal.type === 'reject' ? 'danger' : 'info'}
+      />
     </div>
   );
 };

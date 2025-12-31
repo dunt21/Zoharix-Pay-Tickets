@@ -1,13 +1,30 @@
 /* TicketsBookings.css */
 
 .bookings-container {
-    padding: 2rem 0;
-    /* Zero horizontal padding */
+    padding: 0 4rem 4rem 4rem;
+    /* Consistent 4rem breathing room for premium dashboard feel */
     min-height: calc(100vh - 100px);
     max-width: 100%;
     width: 100%;
-    /* Cover whole width */
-    margin: 0;
+    margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+    .bookings-container {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .bookings-container {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bookings-container {
+        padding: 1.25rem 0.75rem;
+    }
 }
 
 .bookings-header {
@@ -64,25 +81,40 @@
 /* Grid Layouts */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    /* Sizeable cards */
-    row-gap: 4rem;
-    column-gap: 3rem;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2.5rem;
+    /* Larger gap for airy feeling, matching other dashboard pages */
+}
+
+@media (max-width: 1200px) {
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        row-gap: 2.5rem;
+        column-gap: 1.75rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 2.5rem;
+        column-gap: 1.5rem;
+    }
 }
 
 @media (max-width: 768px) {
     .cards-grid {
         grid-template-columns: repeat(2, 1fr);
-        row-gap: 2.5rem;
-        column-gap: 0.75rem;
-        padding: 0;
+        row-gap: 2rem;
+        column-gap: 1rem;
     }
 }
 
 @media (max-width: 480px) {
     .cards-grid {
-        row-gap: 2rem;
-        column-gap: 0.5rem;
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 1.5rem;
+        column-gap: 0.75rem;
     }
 }
 
@@ -92,23 +124,22 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 28px;
+    border-radius: 24px;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
-    min-height: 400px;
-    /* Reduced from 480px to prevent "too long" feel */
-    /* Sizeable Presence */
+    min-height: 420px;
+    /* Sizeable card height */
     box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.1),
         inset 0 0 20px rgba(255, 255, 255, 0.02);
 }
 
 .booking-card:hover {
-    transform: translateY(-12px) scale(1.02);
+    transform: translateY(-8px) scale(1.015);
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(139, 92, 246, 0.4);
     box-shadow:
@@ -116,11 +147,24 @@
         0 0 30px rgba(139, 92, 246, 0.2);
 }
 
+@media (max-width: 1024px) {
+    .booking-card {
+        min-height: 380px;
+        border-radius: 22px;
+    }
+}
+
 @media (max-width: 768px) {
     .booking-card {
-        min-height: 240px;
-        /* Further reduced for mobile proportion */
-        border-radius: 20px;
+        min-height: 280px;
+        border-radius: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .booking-card {
+        min-height: 260px;
+        border-radius: 16px;
     }
 }
 
@@ -241,6 +285,31 @@
     background: rgba(100, 116, 139, 0.15);
     color: #94a3b8;
     border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.status-reschedule,
+.status-reschedule_requested {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.pulse-request {
+    animation: pulse-purple 2s infinite;
+}
+
+@keyframes pulse-purple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+    }
 }
 
 @media (max-width: 768px) {

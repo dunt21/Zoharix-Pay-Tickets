@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     TrendingUp,
     Users,
@@ -6,65 +6,17 @@ import {
     Ticket,
     Calendar,
     Activity,
-    Download,
     Eye,
     Zap,
+    Globe,
     MoreHorizontal,
     Search,
     Bell,
-    Globe,
-    ChevronDown,
-    FileText,
-    Mail,
-    Filter,
-    X
 } from 'lucide-react';
 import Button from '../../../components/Button/Button';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import Papa from 'papaparse';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import Select from 'react-select';
 import './Analytics.css';
 
-const selectStyles = {
-    control: (provided: any) => ({
-        ...provided,
-        backgroundColor: 'var(--bg-primary)',
-        borderColor: 'var(--border-color)',
-        color: 'var(--text-primary)',
-        '&:hover': {
-            borderColor: 'var(--primary-color)',
-        },
-    }),
-    menu: (provided: any) => ({
-        ...provided,
-        backgroundColor: 'var(--bg-secondary)',
-        border: '1px solid var(--border-color)',
-        borderRadius: '6px',
-    }),
-    option: (provided: any, state: any) => ({
-        ...provided,
-        backgroundColor: state.isSelected ? 'var(--primary-color)' : 'transparent',
-        color: 'var(--text-primary)',
-        '&:hover': {
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-        },
-    }),
-    singleValue: (provided: any) => ({
-        ...provided,
-        color: 'var(--text-primary)',
-    }),
-    input: (provided: any) => ({
-        ...provided,
-        color: 'var(--text-primary)',
-    }),
-    placeholder: (provided: any) => ({
-        ...provided,
-        color: 'var(--text-secondary)',
-    }),
-};
+
 
 // --- Mock Visual Components ---
 const LineChartVisual = ({ color = "#ec4899", onClick }: { color?: string; onClick?: () => void }) => (
@@ -162,29 +114,18 @@ const PeakTimesVisual = () => (
 const Analytics: React.FC = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [error, setError] = useState<string | null>(null);
-    const [showFilters, setShowFilters] = useState(false);
-    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date()]);
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [visibleWidgets, setVisibleWidgets] = useState({
         overview: true,
         audience: true,
         revenue: true,
         events: true
     });
-    const [showExportDropdown, setShowExportDropdown] = useState(false);
-    const exportDropdownRef = useRef<HTMLDivElement>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
     const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target as Node)) {
-                setShowExportDropdown(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        // Any general analytics initialization if needed
     }, []);
 
     // Mock data for export
@@ -200,47 +141,6 @@ const Analytics: React.FC = () => {
             { source: 'Photography', date: 'Yesterday', status: 'Pending', amount: 450 },
             { source: 'Tech Summit', date: 'Dec 12', status: 'Paid', amount: 50 }
         ]
-    };
-
-    const handleExportPDF = async () => {
-        const element = document.getElementById('analytics-content');
-        if (!element) return;
-        const canvas = await html2canvas(element);
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        const imgWidth = 210;
-        const pageHeight = 295;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-        }
-        pdf.save('analytics-report.pdf');
-    };
-
-    const handleExportCSV = () => {
-        const csv = Papa.unparse(mockData.transactions);
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'analytics-data.csv');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    const handleExportEmail = () => {
-        const subject = 'Analytics Report';
-        const body = `Please find attached the analytics report.\n\nKey Metrics:\n- Revenue: ₵${mockData.overview.revenue}\n- Users: ${mockData.overview.users}\n- Tickets: ${mockData.overview.tickets}`;
-        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     };
 
     const handleSort = (key: string) => {
@@ -754,69 +654,11 @@ const Analytics: React.FC = () => {
                     ))}
                 </div>
                 <div className="toolbar-actions">
-                    <Button variant="ghost" onClick={() => setShowFilters(!showFilters)} icon={<Filter size={16} />}>Filters</Button>
-                    <div className="export-dropdown" ref={exportDropdownRef}>
-                        <Button variant="outline" className="export-btn" onClick={() => setShowExportDropdown(!showExportDropdown)} icon={<Download size={16} />}>
-                            Descargar Report <ChevronDown size={14} />
-                        </Button>
-                        {showExportDropdown && (
-                            <div className="dropdown-menu">
-                                <button onClick={() => { handleExportPDF(); setShowExportDropdown(false); }}><FileText size={14} /> Export as PDF</button>
-                                <button onClick={() => { handleExportCSV(); setShowExportDropdown(false); }}><FileText size={14} /> Export as CSV</button>
-                                <button onClick={() => { handleExportEmail(); setShowExportDropdown(false); }}><Mail size={14} /> Send via Email</button>
-                            </div>
-                        )}
-                    </div>
+                    {/* Filters Removed */}
                 </div>
             </div>
 
-            {/* Filters Panel */}
-            {showFilters && (
-                <div className="filters-panel">
-                    <div className="filter-group">
-                        <label>Date Range:</label>
-                        <DatePicker
-                            selectsRange={true}
-                            startDate={dateRange[0]}
-                            endDate={dateRange[1]}
-                            onChange={(update) => setDateRange(update)}
-                            className="date-picker"
-                            placeholderText="Select date range"
-                        />
-                    </div>
-                    <div className="filter-group">
-                        <label>Categories:</label>
-                        <Select
-                            isMulti
-                            options={[
-                                { value: 'music', label: 'Music & Concerts' },
-                                { value: 'tech', label: 'Tech & Workshops' },
-                                { value: 'arts', label: 'Arts & Culture' }
-                            ]}
-                            value={selectedCategories.map(cat => ({ value: cat, label: cat }))}
-                            onChange={(selected) => setSelectedCategories(selected ? selected.map(s => s.value) : [])}
-                            styles={selectStyles}
-                            className="category-select"
-                        />
-                    </div>
-                    <div className="filter-group">
-                        <label>Visible Tabs:</label>
-                        <div className="widget-toggles">
-                            {Object.entries(visibleWidgets).map(([key, visible]) => (
-                                <label key={key} className="toggle-label">
-                                    <input
-                                        type="checkbox"
-                                        checked={visible}
-                                        onChange={() => setVisibleWidgets(prev => ({ ...prev, [key]: !prev[key as keyof typeof prev] }))}
-                                    />
-                                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                    <Button variant="ghost" onClick={() => setShowFilters(false)} icon={<X size={16} />}>Close</Button>
-                </div>
-            )}
+            {/* Filters Panel Removed */}
 
             {/* --- Content --- */}
             <div id="analytics-content">

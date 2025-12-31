@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     Calendar,
     Search,
@@ -23,7 +23,9 @@ import Input from '../../../components/Input/Input';
 import Select from '../../../components/Select/Select';
 import NumberStepper from '../../../components/NumberStepper/NumberStepper';
 import AppAlert from '../../../components/AppAlert/AppAlert';
+import { jsPDF } from 'jspdf';
 import './EventsServices.css';
+import { useNavigate } from 'react-router-dom';
 
 // --- Types ---
 type Tab = 'explore' | 'history' | 'manage';
@@ -139,6 +141,7 @@ const MANAGED_ITEMS: ManagedItem[] = [
 
 const EventsServices: React.FC = () => {
     const [activeTab, setActiveTab] = useState<Tab>('explore');
+    const ticketRef = useRef<HTMLDivElement>(null);
 
     const [filterCategory, setFilterCategory] = useState<Category>('all');
     const [searchTerm, setSearchTerm] = useState('');
@@ -150,7 +153,7 @@ const EventsServices: React.FC = () => {
         ...MANAGED_ITEMS.map(item => ({ ...item, isUserCreated: true }))
     ]);
     const [historyItems, setHistoryItems] = useState(HISTORY_ITEMS);
-
+    const navigate = useNavigate();
     // Detail Alert State
     const [detailItem, setDetailItem] = useState<ManagedItem | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -188,13 +191,52 @@ const EventsServices: React.FC = () => {
     const [bookedIds, setBookedIds] = useState<number[]>([]);
     const [isDownloading, setIsDownloading] = useState(false);
 
-    const handleDownloadTicket = () => {
+    const handleDownloadTicket = async () => {
+        if (!ticketRef.current || !bookingItem) return;
+
         setIsDownloading(true);
-        // Simulate a premium download process
-        setTimeout(() => {
+        try {
+            const { toPng } = await import('html-to-image');
+
+            // Ensure images are loaded
+            const images = ticketRef.current.getElementsByTagName('img');
+            await Promise.all(
+                Array.from(images).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise((resolve) => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                })
+            );
+
+            const dataUrl = await toPng(ticketRef.current, {
+                pixelRatio: 3,
+                backgroundColor: '#000000',
+                cacheBust: true,
+                style: {
+                    borderRadius: '0',
+                }
+            });
+
+            const img = new Image();
+            img.src = dataUrl;
+            await new Promise(resolve => { img.onload = resolve; });
+
+            const pdf = new jsPDF({
+                orientation: img.width > img.height ? 'l' : 'p',
+                unit: 'px',
+                format: [img.width / 3, img.height / 3],
+            });
+
+            pdf.addImage(dataUrl, 'PNG', 0, 0, img.width / 3, img.height / 3);
+            pdf.save(`${bookingItem.title.replace(/\s+/g, '_')}_Ticket.pdf`);
+        } catch (error) {
+            console.error('High-fidelity PDF generation failure:', error);
+            alert("Something went wrong with the high-fidelity download. Please try again.");
+        } finally {
             setIsDownloading(false);
-            alert("Ticket downloaded successfully! (Simulation)");
-        }, 2000);
+        }
     };
 
     const handleBook = (item: any) => {
@@ -811,7 +853,7 @@ const EventsServices: React.FC = () => {
                 variant="info"
                 maxWidth="650px"
             >
-                <div className="premium-ticket-container">
+                <div className="premium-ticket-container" ref={ticketRef}>
                     <div className="ticket-top">
                         <div className="ticket-header-content">
                             <span className="ticket-type-label">{bookingItem?.type === 'event' ? 'EVENT TICKET' : 'SERVICE PASS'}</span>
@@ -864,15 +906,16 @@ const EventsServices: React.FC = () => {
                                 <p className="ticket-footer-text">Present this at the venue</p>
                             </div>
                         )}
-
+                        const navigate = useNavigate()
                         <div className="ticket-download-section">
                             <Button
                                 variant="outline"
                                 className="download-btn-full"
-                                onClick={handleDownloadTicket}
+                                onClick={() => navigate('/dashboard/bookings')}
                                 disabled={isDownloading}
+
                             >
-                                {isDownloading ? "Generating Image..." : "Download as Image"}
+                                {isDownloading ? "Preparing your seat..." : "Navigate to Bookings and Tickets"}
                             </Button>
                         </div>
                     </div>
