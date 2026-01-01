@@ -11,14 +11,11 @@ const database_1 = __importDefault(require("./config/database"));
 const server_1 = require("./config/server");
 const cors_2 = require("./config/cors");
 const rateLimit_1 = require("./config/rateLimit");
+const swagger_1 = require("./config/swagger");
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
-<<<<<<< HEAD
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
-=======
-const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
-const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
 const ticketRoutes_1 = __importDefault(require("./routes/ticketRoutes"));
 const paymentRoutes_1 = __importDefault(require("./routes/paymentRoutes"));
 const dashboardRoutes_1 = __importDefault(require("./routes/dashboardRoutes"));
@@ -41,27 +38,27 @@ app.get('/api/health', (req, res) => {
         version: server_1.serverConfig.apiVersion
     });
 });
-<<<<<<< HEAD
-app.use(`/api/${server_1.serverConfig.apiVersion}/auth`, authRoutes_1.default);
-app.use(`/api/${server_1.serverConfig.apiVersion}/events`, eventRoutes_1.default);
-app.use(`/api/${server_1.serverConfig.apiVersion}/users`, userRoutes_1.default);
-app.use(`/api/${server_1.serverConfig.apiVersion}/tickets`, ticketRoutes_1.default);
-app.use(`/api/${server_1.serverConfig.apiVersion}/payments`, paymentRoutes_1.default);
-app.use(`/api/${server_1.serverConfig.apiVersion}/dashboard`, dashboardRoutes_1.default);
-app.get(`/api/${server_1.serverConfig.apiVersion}`, (req, res) => {
-    res.status(200).json({
-        message: 'API is working',
-        version: server_1.serverConfig.apiVersion
-    });
-});
-=======
+app.use(`${apiPrefix}/docs`, swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.swaggerSpec));
 app.use(`${apiPrefix}/auth`, authRoutes_1.default);
-app.use(`${apiPrefix}/users`, userRoutes_1.default);
 app.use(`${apiPrefix}/events`, eventRoutes_1.default);
+app.use(`${apiPrefix}/users`, userRoutes_1.default);
 app.use(`${apiPrefix}/tickets`, ticketRoutes_1.default);
 app.use(`${apiPrefix}/payments`, paymentRoutes_1.default);
 app.use(`${apiPrefix}/dashboard`, dashboardRoutes_1.default);
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
+app.get(apiPrefix, (req, res) => {
+    res.status(200).json({
+        message: 'API is working',
+        version: server_1.serverConfig.apiVersion,
+        endpoints: {
+            auth: `${apiPrefix}/auth`,
+            events: `${apiPrefix}/events`,
+            users: `${apiPrefix}/users`,
+            tickets: `${apiPrefix}/tickets`,
+            payments: `${apiPrefix}/payments`,
+            dashboard: `${apiPrefix}/dashboard`
+        }
+    });
+});
 app.use((req, res) => {
     res.status(404).json({
         error: 'Route not found',

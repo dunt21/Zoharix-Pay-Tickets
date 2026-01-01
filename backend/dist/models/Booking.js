@@ -42,7 +42,6 @@ const bookingSchema = new mongoose_1.Schema({
     },
     event: {
         type: mongoose_1.Schema.Types.ObjectId,
-<<<<<<< HEAD
         ref: 'Event'
     },
     service: {
@@ -52,9 +51,6 @@ const bookingSchema = new mongoose_1.Schema({
     type: {
         type: String,
         enum: ['event', 'service'],
-=======
-        ref: 'Event',
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
         required: true
     },
     tickets: [{
@@ -89,20 +85,16 @@ const bookingSchema = new mongoose_1.Schema({
     },
     bookingReference: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     }
 }, {
     timestamps: true
 });
 bookingSchema.index({ user: 1 });
 bookingSchema.index({ event: 1 });
-<<<<<<< HEAD
 bookingSchema.index({ service: 1 });
 bookingSchema.index({ type: 1 });
-=======
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
 bookingSchema.index({ status: 1 });
-bookingSchema.index({ bookingReference: 1 });
+bookingSchema.index({ bookingReference: 1 }, { unique: true });
 exports.default = mongoose_1.default.model('Booking', bookingSchema);
 //# sourceMappingURL=Booking.js.map

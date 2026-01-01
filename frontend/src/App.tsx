@@ -15,32 +15,43 @@ import Wallet from './pages/Dashboard/Wallet/Wallet';
 import Analytics from './pages/Dashboard/Analytics/Analytics';
 import Settings from './pages/Dashboard/Settings/Settings';
 import Verification from './pages/Auth/Verification';
-
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route element={<AuthLayout />}>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify" element={<Verification />} />
-        </Route>
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<DashboardHome />} />
-          <Route path="services" element={<EventsServices />} />
-          <Route path="bookings" element={<TicketsBookings />} />
-          <Route path="wallet" element={<Wallet />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route element={<AuthLayout />}>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify" element={<Verification />} />
+          </Route>
 
-      <InstallPrompt />
-    </BrowserRouter>
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DashboardHome />} />
+            <Route path="services" element={<EventsServices />} />
+            <Route path="bookings" element={<TicketsBookings />} />
+            <Route path="wallet" element={<Wallet />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Routes>
+
+        <InstallPrompt />
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

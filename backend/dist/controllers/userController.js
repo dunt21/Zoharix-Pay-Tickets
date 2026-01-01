@@ -28,7 +28,24 @@ exports.getProfile = getProfile;
 const updateProfile = async (req, res, next) => {
     try {
         const userId = req.user?.id;
-        const updates = req.body;
+        const { firstName, lastName, phone, location, age, gender, interests, profileImage } = req.body;
+        const updates = {};
+        if (firstName)
+            updates.firstName = firstName;
+        if (lastName)
+            updates.lastName = lastName;
+        if (phone)
+            updates.phone = phone;
+        if (location)
+            updates.location = location;
+        if (age)
+            updates.age = age;
+        if (gender)
+            updates.gender = gender;
+        if (interests)
+            updates.interests = interests;
+        if (profileImage)
+            updates.profileImage = profileImage;
         const user = await User_1.default.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
         if (!user) {
             res.status(404).json({ message: 'User not found' });

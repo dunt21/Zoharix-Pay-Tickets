@@ -1,7 +1,8 @@
 import mongoose, { Document } from 'mongoose';
 export interface IPayment extends Document {
     user: mongoose.Types.ObjectId;
-    booking: mongoose.Types.ObjectId;
+    booking?: mongoose.Types.ObjectId;
+    type: 'booking' | 'topup' | 'withdrawal';
     amount: number;
     currency: string;
     stripePaymentIntentId: string;

@@ -39,7 +39,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
 export const signup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName, phone, role } = req.body;
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -52,7 +52,14 @@ export const signup = async (req: Request, res: Response, next: NextFunction): P
     const hashedPassword = await bcrypt.hash(password, authConfig.bcryptRounds);
 
     // Create user
-    const user = new User({ email, password: hashedPassword, firstName, lastName });
+    const user = new User({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      phone,
+      role: role || 'user'
+    });
     await user.save();
 
     res.status(201).json({

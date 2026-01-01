@@ -42,8 +42,12 @@ const paymentSchema = new mongoose_1.Schema({
     },
     booking: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Booking',
-        required: true
+        ref: 'Booking'
+    },
+    type: {
+        type: String,
+        enum: ['booking', 'topup', 'withdrawal'],
+        default: 'booking'
     },
     amount: {
         type: Number,
@@ -57,8 +61,7 @@ const paymentSchema = new mongoose_1.Schema({
     },
     stripePaymentIntentId: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     status: {
         type: String,
@@ -73,7 +76,7 @@ const paymentSchema = new mongoose_1.Schema({
 });
 paymentSchema.index({ user: 1 });
 paymentSchema.index({ booking: 1 });
-paymentSchema.index({ stripePaymentIntentId: 1 });
+paymentSchema.index({ stripePaymentIntentId: 1 }, { unique: true });
 paymentSchema.index({ status: 1 });
 exports.default = mongoose_1.default.model('Payment', paymentSchema);
 //# sourceMappingURL=Payment.js.map

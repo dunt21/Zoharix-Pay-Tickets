@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteEvent = exports.updateEvent = exports.getEvents = exports.createEvent = void 0;
 const cloudinary_1 = __importDefault(require("../config/cloudinary"));
-const Event_1 = __importDefault(require("../models/Event"));
+const EventService_1 = __importDefault(require("../services/EventService"));
 const createEvent = async (req, res, next) => {
     try {
         const organizerId = req.user?.id;
@@ -14,8 +14,7 @@ const createEvent = async (req, res, next) => {
             const result = await cloudinary_1.default.uploader.upload(req.file.path);
             eventData.imageUrl = result.secure_url;
         }
-        const event = new Event_1.default({ ...eventData, organizer: organizerId });
-        await event.save();
+        const event = await EventService_1.default.createEvent({ ...eventData, organizer: organizerId });
         res.status(201).json({
             message: 'Event created successfully',
             event
@@ -28,22 +27,15 @@ const createEvent = async (req, res, next) => {
 exports.createEvent = createEvent;
 const getEvents = async (req, res, next) => {
     try {
-        const { page = 1, limit = 10, search } = req.query;
-        let query = {};
-        if (search)
-            query = { title: { $regex: search, $options: 'i' } };
-        const events = await Event_1.default.find(query)
-<<<<<<< HEAD
-            .populate('organizer', 'firstName lastName email')
-=======
-            .populate('organizer', 'name')
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
-            .limit(Number(limit))
-            .skip((Number(page) - 1) * Number(limit));
+        const { page = 1, limit = 10, search, category, location } = req.query;
+        const result = await EventService_1.default.getEventsWithFilters({
+            category: category,
+            location: location,
+        }, Number(page), Number(limit));
         res.status(200).json({
             message: 'Events retrieved successfully',
-            events,
-            pagination: { page, limit, total: await Event_1.default.countDocuments(query) }
+            events: result.events,
+            pagination: result.pagination
         });
     }
     catch (error) {
@@ -64,7 +56,7 @@ const updateEvent = async (req, res, next) => {
             const result = await cloudinary_1.default.uploader.upload(req.file.path);
             updates.imageUrl = result.secure_url;
         }
-        const event = await Event_1.default.findOneAndUpdate({ _id: eventId, organizer: organizerId }, updates, { new: true });
+        const event = await EventService_1.default.updateEvent(eventId, organizerId, updates);
         if (!event) {
             res.status(404).json({ message: 'Event not found or unauthorized' });
             return;
@@ -87,7 +79,7 @@ const deleteEvent = async (req, res, next) => {
             res.status(400).json({ message: 'Event ID is required' });
             return;
         }
-        const event = await Event_1.default.findOneAndDelete({ _id: eventId, organizer: organizerId });
+        const event = await EventService_1.default.deleteEvent(eventId, organizerId);
         if (!event) {
             res.status(404).json({ message: 'Event not found or unauthorized' });
             return;

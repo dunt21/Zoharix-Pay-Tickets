@@ -38,7 +38,6 @@ const userSchema = new mongoose_1.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
         lowercase: true,
         trim: true
     },
@@ -46,16 +45,12 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-<<<<<<< HEAD
     firstName: {
         type: String,
         required: true,
         trim: true
     },
     lastName: {
-=======
-    name: {
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
         type: String,
         required: true,
         trim: true
@@ -75,10 +70,28 @@ const userSchema = new mongoose_1.Schema({
     phone: {
         type: String,
         trim: true
-    }
+    },
+    balance: {
+        type: Number,
+        default: 0
+    },
+    location: {
+        type: String,
+        trim: true
+    },
+    age: {
+        type: Number
+    },
+    gender: {
+        type: String,
+        enum: ['male', 'female', 'other']
+    },
+    interests: [{
+            type: String
+        }]
 }, {
     timestamps: true
 });
-userSchema.index({ email: 1 });
+userSchema.index({ email: 1 }, { unique: true });
 exports.default = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=User.js.map

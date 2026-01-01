@@ -7,6 +7,7 @@ exports.getPaymentHistory = exports.confirmPayment = exports.createPaymentIntent
 const stripe_1 = require("../config/stripe");
 const Payment_1 = __importDefault(require("../models/Payment"));
 const Booking_1 = __importDefault(require("../models/Booking"));
+const User_1 = __importDefault(require("../models/User"));
 const createPaymentIntent = async (req, res, next) => {
     try {
         const userId = req.user?.id;
@@ -60,6 +61,7 @@ exports.confirmPayment = confirmPayment;
 const getPaymentHistory = async (req, res, next) => {
     try {
         const userId = req.user?.id;
+        const user = await User_1.default.findById(userId).select('balance');
         const payments = await Payment_1.default.find({ user: userId })
             .populate({
             path: 'booking',
@@ -71,6 +73,7 @@ const getPaymentHistory = async (req, res, next) => {
             .sort({ createdAt: -1 });
         res.status(200).json({
             message: 'Payment history retrieved',
+            balance: user?.balance || 0,
             payments
         });
     }

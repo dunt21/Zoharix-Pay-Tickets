@@ -8,6 +8,8 @@ import connectDB from './config/database';
 import { serverConfig } from './config/server';
 import { corsOptions } from './config/cors';
 import { rateLimitConfig } from './config/rateLimit';
+import { swaggerSpec } from './config/swagger';
+import swaggerUi from 'swagger-ui-express';
 
 // Import routes
 import authRoutes from './routes/authRoutes';
@@ -51,6 +53,9 @@ app.get('/api/health', (req, res) => {
     version: serverConfig.apiVersion
   });
 });
+
+// Swagger Documentation
+app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // API routes
 app.use(`${apiPrefix}/auth`, authRoutes);

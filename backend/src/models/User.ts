@@ -9,9 +9,10 @@ export interface IUser extends Document {
   role: 'user' | 'organizer' | 'admin';
   profileImage?: string;
   phone?: string;
+  balance: number;
+  location?: string;
   age?: number;
   gender?: 'male' | 'female' | 'other';
-  location?: string;
   interests?: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -29,15 +30,15 @@ const userSchema = new Schema<IUser>({
     required: true
   },
   firstName: {
-   type: String,
-   required: true,
-   trim: true
- },
- lastName: {
-   type: String,
-   required: true,
-   trim: true
- },
+    type: String,
+    required: true,
+    trim: true
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true
+  },
   isVerified: {
     type: Boolean,
     default: false
@@ -53,7 +54,25 @@ const userSchema = new Schema<IUser>({
   phone: {
     type: String,
     trim: true
-  }
+  },
+  balance: {
+    type: Number,
+    default: 0
+  },
+  location: {
+    type: String,
+    trim: true
+  },
+  age: {
+    type: Number
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other']
+  },
+  interests: [{
+    type: String
+  }]
 }, {
   timestamps: true
 });

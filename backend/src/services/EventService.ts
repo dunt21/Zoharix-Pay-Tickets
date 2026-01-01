@@ -1,6 +1,16 @@
-import Event from '../models/Event';
+import Event, { IEvent } from '../models/Event';
 import Booking from '../models/Booking';
 import User from '../models/User';
+
+interface PaginatedEvents {
+  events: IEvent[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+}
 
 interface EventSearchFilters {
   category?: string;
@@ -267,6 +277,38 @@ class EventService {
       throw new Error('Failed to retrieve trending events');
     }
   }
+
+  async createEvent(data: any): Promise<IEvent> {
+    try {
+      const event = new Event(data);
+      return await event.save();
+    } catch (error) {
+      console.error('Failed to create event:', error);
+      throw new Error('Failed to create event');
+    }
+  }
+
+  async updateEvent(eventId: string, organizerId: string, updates: any): Promise<IEvent | null> {
+    try {
+      return await Event.findOneAndUpdate(
+        { _id: eventId, organizer: organizerId },
+        updates,
+        { new: true }
+      );
+    } catch (error) {
+      console.error('Failed to update event:', error);
+      throw new Error('Failed to update event');
+    }
+  }
+
+  async deleteEvent(eventId: string, organizerId: string): Promise<IEvent | null> {
+    try {
+      return await Event.findOneAndDelete({ _id: eventId, organizer: organizerId });
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+      throw new Error('Failed to delete event');
+    }
+  }
 }
 
-export default EventService;
+export default new EventService();

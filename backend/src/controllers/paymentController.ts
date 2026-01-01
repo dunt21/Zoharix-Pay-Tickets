@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { stripe, stripeConfig } from '../config/stripe';
 import Payment from '../models/Payment';
 import Booking from '../models/Booking';
+import User from '../models/User';
 
 export const createPaymentIntent = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -70,6 +71,9 @@ export const getPaymentHistory = async (req: Request, res: Response, next: NextF
   try {
     const userId = (req as any).user?.id;
 
+    // Get user balance from User model
+    const user = await User.findById(userId).select('balance');
+
     // Get user payments
     const payments = await Payment.find({ user: userId })
       .populate({
@@ -83,6 +87,7 @@ export const getPaymentHistory = async (req: Request, res: Response, next: NextF
 
     res.status(200).json({
       message: 'Payment history retrieved',
+      balance: user?.balance || 0,
       payments
     });
   } catch (error) {

@@ -26,7 +26,18 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
 export const updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId = (req as any).user?.id;
-    const updates = req.body;
+    const { firstName, lastName, phone, location, age, gender, interests, profileImage } = req.body;
+
+    // Construct update object with allowed fields
+    const updates: any = {};
+    if (firstName) updates.firstName = firstName;
+    if (lastName) updates.lastName = lastName;
+    if (phone) updates.phone = phone;
+    if (location) updates.location = location;
+    if (age) updates.age = age;
+    if (gender) updates.gender = gender;
+    if (interests) updates.interests = interests;
+    if (profileImage) updates.profileImage = profileImage;
 
     // Update user
     const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');

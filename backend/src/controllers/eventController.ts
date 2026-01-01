@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import cloudinary from '../config/cloudinary';
-import Event from '../models/Event';
+import eventService from '../services/EventService';
 
 export const createEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -13,9 +13,8 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
       eventData.imageUrl = result.secure_url;
     }
 
-    // Create event
-    const event = new Event({ ...eventData, organizer: organizerId });
-    await event.save();
+    // Create event via service
+    const event = await eventService.createEvent({ ...eventData, organizer: organizerId });
 
     res.status(201).json({
       message: 'Event created successfully',
@@ -28,20 +27,18 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 
 export const getEvents = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { page = 1, limit = 10, search } = req.query;
+    const { page = 1, limit = 10, search, category, location } = req.query;
 
-    // Query events
-    let query: any = {};
-    if (search) query = { title: { $regex: search, $options: 'i' } };
-    const events = await Event.find(query)
-      .populate('organizer', 'firstName lastName email')
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit));
+    const result = await eventService.getEventsWithFilters({
+      category: category as string,
+      location: location as string,
+      // search is not yet handled in getEventsWithFilters, but kept for future use
+    }, Number(page), Number(limit));
 
     res.status(200).json({
       message: 'Events retrieved successfully',
-      events,
-      pagination: { page, limit, total: await Event.countDocuments(query) }
+      events: result.events,
+      pagination: result.pagination
     });
   } catch (error) {
     next(error);
@@ -65,12 +62,8 @@ export const updateEvent = async (req: Request, res: Response, next: NextFunctio
       updates.imageUrl = result.secure_url;
     }
 
-    // Update event (ensure organizer owns it)
-    const event = await Event.findOneAndUpdate(
-      { _id: eventId, organizer: organizerId },
-      updates,
-      { new: true }
-    );
+    // Update event via service
+    const event = await eventService.updateEvent(eventId, organizerId, updates);
 
     if (!event) {
       res.status(404).json({ message: 'Event not found or unauthorized' });
@@ -96,8 +89,8 @@ export const deleteEvent = async (req: Request, res: Response, next: NextFunctio
       return;
     }
 
-    // Delete event
-    const event = await Event.findOneAndDelete({ _id: eventId, organizer: organizerId });
+    // Delete event via service
+    const event = await eventService.deleteEvent(eventId, organizerId);
 
     if (!event) {
       res.status(404).json({ message: 'Event not found or unauthorized' });

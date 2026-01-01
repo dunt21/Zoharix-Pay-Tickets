@@ -30,11 +30,7 @@ class EventService {
                     query.price.$lte = filters.priceMax;
             }
             const events = await Event_1.default.find(query)
-<<<<<<< HEAD
                 .populate('organizer', 'firstName lastName email')
-=======
-                .populate('organizer', 'name email')
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
                 .sort({ date: 1 })
                 .limit(limit)
                 .skip((page - 1) * limit);
@@ -61,25 +57,15 @@ class EventService {
                 throw new Error('Event not found');
             }
             const bookings = await Booking_1.default.find({ event: eventId })
-<<<<<<< HEAD
                 .populate('user', 'firstName lastName email')
-=======
-                .populate('user', 'name email')
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
                 .sort({ createdAt: -1 });
             const totalBookings = bookings.length;
             const totalRevenue = bookings.reduce((sum, booking) => sum + booking.totalAmount, 0);
             const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
             const ticketBreakdown = event.ticketTypes.map(ticketType => {
-<<<<<<< HEAD
                 const bookingsForType = bookings.filter(booking => booking.tickets && booking.tickets.some(ticket => ticket.type === ticketType.name));
                 const quantitySold = bookingsForType.reduce((sum, booking) => {
                     const ticket = booking.tickets && booking.tickets.find(t => t.type === ticketType.name);
-=======
-                const bookingsForType = bookings.filter(booking => booking.tickets.some(ticket => ticket.type === ticketType.name));
-                const quantitySold = bookingsForType.reduce((sum, booking) => {
-                    const ticket = booking.tickets.find(t => t.type === ticketType.name);
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
                     return sum + (ticket ? ticket.quantity : 0);
                 }, 0);
                 return {
@@ -165,15 +151,9 @@ class EventService {
             const now = new Date();
             const events = await Event_1.default.find({
                 date: { $gte: now },
-<<<<<<< HEAD
                 status: 'published'
             })
                 .populate('organizer', 'firstName lastName')
-=======
-                status: 'active'
-            })
-                .populate('organizer', 'name')
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
                 .sort({ date: 1 })
                 .limit(limit);
             return events;
@@ -238,11 +218,7 @@ class EventService {
             ]);
             return trendingEvents.map(item => ({
                 ...item.event,
-<<<<<<< HEAD
                 organizer: { firstName: item.organizer.firstName, lastName: item.organizer.lastName },
-=======
-                organizer: { name: item.organizer.name },
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
                 trendingScore: item.bookingCount
             }));
         }
@@ -251,6 +227,34 @@ class EventService {
             throw new Error('Failed to retrieve trending events');
         }
     }
+    async createEvent(data) {
+        try {
+            const event = new Event_1.default(data);
+            return await event.save();
+        }
+        catch (error) {
+            console.error('Failed to create event:', error);
+            throw new Error('Failed to create event');
+        }
+    }
+    async updateEvent(eventId, organizerId, updates) {
+        try {
+            return await Event_1.default.findOneAndUpdate({ _id: eventId, organizer: organizerId }, updates, { new: true });
+        }
+        catch (error) {
+            console.error('Failed to update event:', error);
+            throw new Error('Failed to update event');
+        }
+    }
+    async deleteEvent(eventId, organizerId) {
+        try {
+            return await Event_1.default.findOneAndDelete({ _id: eventId, organizer: organizerId });
+        }
+        catch (error) {
+            console.error('Failed to delete event:', error);
+            throw new Error('Failed to delete event');
+        }
+    }
 }
-exports.default = EventService;
+exports.default = new EventService();
 //# sourceMappingURL=EventService.js.map

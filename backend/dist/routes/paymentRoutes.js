@@ -9,5 +9,6 @@ router.use(authMiddleware_1.authenticateToken);
 router.post('/create-intent', validationMiddleware_1.validatePayment, validationMiddleware_1.handleValidationErrors, paymentController_1.createPaymentIntent);
 router.post('/confirm', paymentController_1.confirmPayment);
 router.get('/history', paymentController_1.getPaymentHistory);
+router.get('/export', paymentController_1.getPaymentHistory);
 exports.default = router;
 //# sourceMappingURL=paymentRoutes.js.map

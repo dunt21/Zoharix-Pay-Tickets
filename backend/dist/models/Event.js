@@ -49,27 +49,8 @@ const eventSchema = new mongoose_1.Schema({
         required: true
     },
     location: {
-<<<<<<< HEAD
         type: String,
         required: true
-=======
-        address: {
-            type: String,
-            required: true
-        },
-        city: {
-            type: String,
-            required: true
-        },
-        country: {
-            type: String,
-            required: true
-        },
-        coordinates: {
-            lat: Number,
-            lng: Number
-        }
->>>>>>> 3dc6c4ccd869f1f4444ba6c90e94369c6a588506
     },
     organizer: {
         type: mongoose_1.Schema.Types.ObjectId,

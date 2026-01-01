@@ -2,7 +2,8 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IPayment extends Document {
   user: mongoose.Types.ObjectId;
-  booking: mongoose.Types.ObjectId;
+  booking?: mongoose.Types.ObjectId;
+  type: 'booking' | 'topup' | 'withdrawal';
   amount: number;
   currency: string;
   stripePaymentIntentId: string;
@@ -20,8 +21,12 @@ const paymentSchema = new Schema<IPayment>({
   },
   booking: {
     type: Schema.Types.ObjectId,
-    ref: 'Booking',
-    required: true
+    ref: 'Booking'
+  },
+  type: {
+    type: String,
+    enum: ['booking', 'topup', 'withdrawal'],
+    default: 'booking'
   },
   amount: {
     type: Number,
