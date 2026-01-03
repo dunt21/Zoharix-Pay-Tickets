@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
     FaThLarge,
     FaCalendarAlt,
@@ -8,9 +8,12 @@ import {
     FaChartPie,
     FaCog,
     FaSignOutAlt,
-    FaTimes
+    FaTimes,
+    FaMoon,
+    FaSun
 } from 'react-icons/fa';
 import './Sidebar.css';
+import { useTheme } from '../../context/ThemeContext';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -18,6 +21,18 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+    const navigate = useNavigate();
+    const { theme, toggleTheme } = useTheme();
+
+    const handleLogout = () => {
+        // Clear auth data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
+        // Navigate to landing page
+        navigate('/');
+    };
+
     const menuItems = [
         { path: '/dashboard', icon: <FaThLarge />, label: 'Dashboard' },
         { path: '/dashboard/services', icon: <FaCalendarAlt />, label: 'Events & Services' },
@@ -81,7 +96,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="sidebar-footer">
-                    <button className="logout-btn">
+                    <button className="theme-toggle-btn icon-only" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}>
+                        {theme === 'dark' ? <FaSun /> : <FaMoon />}
+                    </button>
+                    <button className="logout-btn" onClick={handleLogout}>
                         <FaSignOutAlt />
                         <span>Log Out</span>
                     </button>

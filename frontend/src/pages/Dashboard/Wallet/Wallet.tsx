@@ -604,7 +604,7 @@ const Wallet: React.FC = () => {
                         <Button variant="ghost" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }} onClick={handleViewAllTransactions}>View All</Button>
                     </div>
 
-                    <div style={{ overflowX: 'auto' }}>
+                    <div className="desktop-transactions">
                         <table className="transactions-table">
                             <thead>
                                 <tr>
@@ -648,6 +648,45 @@ const Wallet: React.FC = () => {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    <div className="mobile-transactions">
+                        {transactions.map(t => (
+                            <div key={t.id} className="mobile-transaction-card">
+                                <div className="mt-card-header">
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <div className={`t-icon ${t.type}`} style={{ width: '32px', height: '32px' }}>
+                                            {t.type === 'credit' ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
+                                        </div>
+                                        <div>
+                                            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.9rem' }}>
+                                                {t.description}
+                                            </div>
+                                            <div className={`status-badge ${t.status}`}>
+                                                {t.status === 'completed' ? '✓ Completed' : '⏳ Pending'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={`t-amount ${t.type}`} style={{ fontSize: '1rem' }}>
+                                        {t.type === 'credit' ? '+' : '-'}₵{Math.abs(t.amount).toFixed(2)}
+                                    </div>
+                                </div>
+
+                                <div className="mt-card-details">
+                                    <div className="mt-detail-item">
+                                        <span className="mt-label">Date</span>
+                                        <span className="mt-value">{t.date}</span>
+                                    </div>
+                                    <div className="mt-detail-item">
+                                        <span className="mt-label">Method</span>
+                                        <span className="mt-value">
+                                            {t.method === 'Bank' ? <Landmark size={12} /> : t.method === 'Card' ? <CreditCard size={12} /> : <Smartphone size={12} />}
+                                            {t.method}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
 

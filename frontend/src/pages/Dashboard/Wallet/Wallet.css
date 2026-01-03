@@ -524,3 +524,79 @@
     padding: 1.5rem;
   }
 }
+
+/* Mobile Transaction Styles */
+.mobile-transactions {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.desktop-transactions {
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .desktop-transactions {
+    display: none;
+  }
+
+  .mobile-transactions {
+    display: flex;
+  }
+}
+
+.mobile-transaction-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.mt-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.status-badge.completed {
+  color: var(--text-secondary);
+}
+
+.status-badge.pending {
+  color: #f59e0b;
+}
+
+.mt-card-details {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mt-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mt-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.mt-value {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
