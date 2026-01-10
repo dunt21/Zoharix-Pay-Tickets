@@ -215,7 +215,7 @@ const SignUp: React.FC = () => {
                             onChange={handleInputChange}
                         />
                         <span className="checkmark"></span>
-                        I agree to the <Link to="/terms" target="_blank">terms and conditions</Link>
+                        I agree to the <Link to="/terms" target="_blank" rel="noopener noreferrer">terms and conditions</Link>
                     </label>
                 </div>
 

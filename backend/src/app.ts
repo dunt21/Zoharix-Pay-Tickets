@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import hpp from 'hpp';
 
 // Import configurations
 import connectDB from './config/database';
@@ -27,6 +29,10 @@ const app = express();
 
 // Trust proxy for rate limiting behind reverse proxy
 app.set('trust proxy', 1);
+
+// Security middleware
+app.use(helmet()); // Sets various HTTP headers for security
+app.use(hpp()); // Protects against HTTP Parameter Pollution
 
 // CORS middleware
 app.use(cors(corsOptions));

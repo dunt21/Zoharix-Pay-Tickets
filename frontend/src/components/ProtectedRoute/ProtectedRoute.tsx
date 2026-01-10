@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
+import { apiClient, API_ENDPOINTS } from '../../config/api';
+
 interface ProtectedRouteProps {
     children: React.ReactNode;
 }
@@ -10,16 +12,26 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const location = useLocation();
 
     useEffect(() => {
-        // Check if user has a valid token
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
+        const verifyToken = async () => {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
 
-        if (token && user) {
-            // TODO: Optionally verify token with backend
-            setIsAuthenticated(true);
-        } else {
-            setIsAuthenticated(false);
-        }
+            if (!token || !user) {
+                setIsAuthenticated(false);
+                return;
+            }
+
+            try {
+                // Verify token by fetching profile
+                await apiClient.get(API_ENDPOINTS.PROFILE);
+                setIsAuthenticated(true);
+            } catch (error) {
+                console.error('Auth verification failed:', error);
+                setIsAuthenticated(false);
+            }
+        };
+
+        verifyToken();
     }, []);
 
     // Loading state
