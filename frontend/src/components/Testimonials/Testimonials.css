@@ -1,0 +1,62 @@
+/* ============================================
+   THEME-AWARE TESTIMONIALS SECTION - SLIDER
+   ============================================ */
+
+.testimonials {
+    padding: 6rem 0;
+    /* Removed horizontal padding for full width slider */
+    background: var(--bg-secondary);
+    overflow: hidden;
+}
+
+.testimonials-marquee-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 2rem 0;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.testimonials-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: scrollTestimonials 50s linear infinite;
+}
+
+.testimonials-marquee-container:hover .testimonials-marquee-track {
+    animation-play-state: paused;
+}
+
+@keyframes scrollTestimonials {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.testimonial-slide {
+    width: 400px;
+    /* Fixed width for slides */
+    padding: 0 1.5rem;
+    flex-shrink: 0;
+}
+
+/* Ensure cards take full height of the slide */
+.testimonial-slide>div {
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .testimonials {
+        padding: 4rem 0;
+    }
+
+    .testimonial-slide {
+        width: 320px;
+        padding: 0 1rem;
+    }
+}

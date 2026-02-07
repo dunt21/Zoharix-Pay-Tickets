@@ -1,0 +1,30 @@
+/* ============================================
+   THEME TOGGLE BUTTON
+   ============================================ */
+
+.theme-toggle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--primary-color);
+    transform: rotate(15deg);
+}
+
+@media (max-width: 768px) {
+    .theme-toggle-btn {
+        margin-left: auto;
+    }
+}

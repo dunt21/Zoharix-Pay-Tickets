@@ -1,0 +1,16 @@
+export declare const generateRandomString: (length?: number) => string;
+export declare const generateRandomToken: (length?: number) => string;
+export declare const hashString: (data: string, algorithm?: string) => string;
+export declare const hashPassword: (password: string) => Promise<string>;
+export declare const verifyPassword: (password: string, hashedPassword: string) => Promise<boolean>;
+export declare const encryptData: (data: string, key: string) => string;
+export declare const decryptData: (encryptedData: string, key: string) => string;
+export declare const generateAPIKey: () => string;
+export declare const generateSecureId: (prefix?: string) => string;
+export declare const createHMAC: (data: string, secret: string) => string;
+export declare const verifyHMAC: (data: string, secret: string, hmac: string) => boolean;
+export declare const generateOTP: (length?: number) => string;
+export declare const hashSensitiveData: (data: string) => string;
+export declare const maskEmail: (email: string) => string;
+export declare const maskPhoneNumber: (phone: string) => string;
+//# sourceMappingURL=cryptoUtils.d.ts.map

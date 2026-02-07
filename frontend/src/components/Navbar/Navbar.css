@@ -1,0 +1,306 @@
+/* ============================================
+   THEME-AWARE NAVBAR - STICKY & GLASSMORPHIC
+   ============================================ */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 70px;
+    /* Fixed height for layout calculations */
+    /* Theme-aware background with transparency */
+    background: rgba(var(--bg-card-rgb, 10, 10, 10), 0.7);
+    /* Fallback to theme var if RGB not set, but we need transparency so we'll use a trick or just the var with opacity if supported, 
+       or better yet, use the theme var directly if it's an rgba or hex. 
+       Since we don't have RGB vars, let's use the theme background but slightly transparent if possible, 
+       or just use the theme background variable which changes. 
+       To get the glass effect on light mode, we need a light semi-transparent background.
+    */
+    background: var(--bg-card);
+    /* Use solid theme color first as fallback */
+    background: color-mix(in srgb, var(--bg-card), transparent 20%);
+    /* Modern CSS for transparency */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+/* For better browser support, let's just use the variable and rely on the alpha channel if defined, 
+   or define specific backgrounds for light/dark in the media query or via the variable itself.
+   Actually, let's just use the variable. If it's solid, no glass effect, but readable.
+   To keep glass effect, we can use a semi-transparent version.
+*/
+.navbar {
+    background: var(--bg-primary);
+    /* Fallback */
+    background: color-mix(in srgb, var(--bg-primary), transparent 10%);
+}
+
+/* Let's try a safer approach for the glass effect that works with the theme vars */
+.navbar {
+    background: var(--bg-card);
+    /* Default to card bg which is usually appropriate */
+    opacity: 0.95;
+    /* Slight transparency */
+}
+
+/* Re-defining properly */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 70px;
+    background: var(--bg-card);
+    /* Theme aware */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    opacity: 0.95;
+}
+
+.navbar.scrolled {
+    box-shadow: var(--shadow-card);
+    border-bottom: 1px solid var(--border-color);
+    opacity: 0.98;
+}
+
+.nav-container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo */
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 1001;
+    /* Ensure logo is above mobile menu if needed */
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+    border-radius: 8px;
+}
+
+.logo-text {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+
+/* Desktop Navigation Wrapper */
+.desktop-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin-left: 2rem;
+}
+
+/* Navigation Links - Centered */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+    align-items: center;
+    margin: 0 auto;
+    /* Centers the links in remaining space if flex behavior allows, or we use specific centering */
+    padding: 0;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-links li a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.nav-links li a:hover {
+    color: var(--text-primary);
+}
+
+.nav-links li a:hover::after {
+    width: 100%;
+}
+
+.nav-links li a.active {
+    color: var(--text-primary);
+}
+
+.nav-links li a.active::after {
+    width: 60%;
+}
+
+/* Actions - Right Aligned */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+    /* Pushes to right */
+}
+
+/* CTA Button */
+.nav-cta-btn {
+    padding: 0.6rem 1.4rem;
+    font-size: 0.85rem;
+    border-radius: 50px;
+}
+
+/* Mobile Menu Icon */
+.mobile-menu-icon {
+    display: none;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    padding: 0.5rem;
+    z-index: 1002;
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu-icon:hover {
+    transform: scale(1.1);
+    color: var(--primary-light);
+}
+
+/* Mobile Menu Drawer (Hidden by default) */
+.mobile-menu {
+    display: none;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .nav-links {
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 0 1.5rem;
+    }
+
+    /* Hide Desktop Nav */
+    .desktop-nav {
+        display: none;
+    }
+
+    /* Show Mobile Icon */
+    .mobile-menu-icon {
+        display: block;
+    }
+
+    /* Mobile Menu Drawer Styles */
+    .mobile-menu {
+        display: flex;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100vh;
+        background: var(--bg-primary);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1001;
+        /* Below toggle button */
+        padding: 2rem;
+    }
+
+    .mobile-menu.active {
+        transform: translateX(0);
+    }
+
+    .mobile-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .mobile-links li a {
+        text-decoration: none;
+        color: var(--text-secondary);
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: color 0.3s ease;
+    }
+
+    .mobile-links li a:hover {
+        color: var(--text-primary);
+    }
+
+    .mobile-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 250px;
+        margin-top: 1rem;
+    }
+
+    .mobile-cta {
+        width: 100%;
+        justify-content: center;
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+}

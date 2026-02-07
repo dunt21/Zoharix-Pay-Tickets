@@ -1,6 +1,7 @@
-# Zoharix Pay + Tickets
+# Z-Events
 
-**Zoharix Pay + Tickets** is a unified event ticketing and business booking platform. It allows:
+
+**Z-Events** is a unified event ticketing and business booking platform. It allows:
 
 - Event organizers to create events, sell tickets, and track attendance.
 - Businesses (salons, barbers, trainers, restaurants, etc.) to host services, manage bookings, and accept payments.
@@ -29,9 +30,10 @@
 ## Getting Started
 
 1. Clone the repository:
-   git clone https://github.com/zoharix/Zoharix-Pay-Tickets.git
-
-2. Navigate to backend/frontend folders and install dependencies:
+   ```
+   git clone https://github.com/Zoharix/Z-Events.git
+   ```
+3. Navigate to backend/frontend folders and install dependencies:
 
 
 npm install
@@ -49,6 +51,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for simple steps.
 All finalized project documentation PDFs are stored in the [docs](docs/) folder:
 
 - [Project Overview](docs/Project-Overview.pdf)
+- [User Flow Diagrams](docs/User-Flow-Diagrams.pdf)
+  
 
 
 ## ✅ Notes for Your Team
