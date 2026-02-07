@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { login, signup, logout, verifyEmail, refreshToken } from '../controllers/authController';
+import { login, signup, logout, verifyEmail, refreshToken, forgotPassword, resetPassword, googleAuth, googleAuthCallback } from '../controllers/authController';
 import { validateLogin, validateSignup, handleValidationErrors } from '../middleware/validationMiddleware';
 
 const router = Router();
@@ -130,5 +130,15 @@ router.get('/verify/:token', verifyEmail);
  *         description: Refresh token is required
  */
 router.post('/refresh', refreshToken);
+
+// Forgot/Reset Password
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
+
+import passport from '../config/passport';
+
+// Google OAuth (Placeholders)
+router.get('/google', googleAuth);
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/login' }), googleAuthCallback);
 
 export default router;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
@@ -15,7 +16,7 @@ const Login: React.FC = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { success } = useToast();
+    const { success, error } = useToast();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -29,28 +30,41 @@ const Login: React.FC = () => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API delay
-        setTimeout(() => {
-            // Mock successful login
-            const mockUser = {
-                id: '1',
-                email: formData.email,
-                name: 'Demo User',
-                role: 'user'
-            };
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password
+                })
+            });
 
-            const mockToken = 'mock-jwt-token-12345';
+            const data = await response.json();
 
-            // Save token to localStorage
-            localStorage.setItem('token', mockToken);
-            localStorage.setItem('user', JSON.stringify(mockUser));
+            if (response.ok) {
+                // Save token and user info
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
 
-            success('Login successful! Redirecting...');
-            console.log('Login successful (Mocked)');
+                success('Login successful! Redirecting...');
+                console.log('Login successful');
 
+                setTimeout(() => {
+                    setIsLoading(false);
+                    navigate('/dashboard');
+                }, 500);
+            } else {
+                error(data.message || 'Login failed');
+                setIsLoading(false);
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            error('Connection error. Please try again.');
             setIsLoading(false);
-            navigate('/dashboard');
-        }, 1500);
+        }
     };
 
 
@@ -119,6 +133,34 @@ const Login: React.FC = () => {
                 >
                     {isLoading ? 'Signing In...' : 'Sign In'}
                 </Button>
+
+                <div className="auth-separator" style={{ margin: '1.5rem 0', textAlign: 'center', position: 'relative' }}>
+                    <span style={{ background: 'white', padding: '0 10px', color: '#666', position: 'relative', zIndex: 1 }}>OR</span>
+                    <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: '#eee' }}></div>
+                </div>
+
+                <a 
+                    href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/auth/google`}
+                    className="btn-google full-width"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '12px',
+                        border: '1px solid #ddd',
+                        borderRadius: '8px',
+                        background: 'white',
+                        color: '#333',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        transition: 'all 0.2s',
+                        cursor: 'pointer'
+                    }}
+                >
+                <FcGoogle style={{ fontSize: '20px' }} />
+                    Sign in with Google
+                </a>
             </form>
 
 

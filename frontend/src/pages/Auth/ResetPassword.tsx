@@ -45,12 +45,44 @@ const ResetPassword: React.FC = () => {
 
     setIsLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
+    setIsLoading(true);
+
+    // const match = window.location.pathname.match(/\/reset-password\/([^/]+)/);
+    // const token = match ? match[1] : null;
+    const { token } = useParams<{ token: string }>();
+
+    if (!token) {
+        error("Invalid or missing reset token.");
+        setIsLoading(false);
+        return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/v1/auth/reset-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token, newPassword: formData.password }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsSuccess(true);
+        success(data.message || "Password reset successful!");
+      } else {
+        error(data.message || "Failed to reset password.");
+      }
+    } catch (err) {
+      error("Server error. Please check your connection or try again later.");
+      console.error("Reset Password Error:", err);
+    } finally {
       setIsLoading(false);
-      setIsSuccess(true);
-      success("Password reset successful!");
-    }, 1500);
+    }
   };
 
   return (

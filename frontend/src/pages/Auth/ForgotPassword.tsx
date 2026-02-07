@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaEnvelope, FaArrowLeft } from "react-icons/fa";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
@@ -56,8 +56,13 @@ const ForgotPassword: React.FC = () => {
       if (response.ok) {
         success(
           data.message ||
-            "If an account with that email exists, a password reset link has been sent.",
+        "If an account with that email exists, a password reset link has been sent.",
         );
+
+        if (data.resetToken) {
+            console.log("🐛 DEV MODE - Reset Token:", data.resetToken);
+            console.log("🔗 Reset Link:", `${window.location.origin}/reset-password/${data.resetToken}`);
+        }
 
         setEmail("");
       } else {

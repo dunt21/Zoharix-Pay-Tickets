@@ -4,11 +4,10 @@ import { authConfig } from '../config/auth';
 import User from '../models/User';
 
 // Extend Request interface to include user
+import { IUser } from '../models/User';
 declare global {
   namespace Express {
-    interface Request {
-      user?: any;
-    }
+    interface User extends IUser {}
   }
 }
 

@@ -5,6 +5,7 @@ import SignUp from './pages/Auth/SignUp';
 import Login from './pages/Auth/Login';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import ResetPassword from './pages/Auth/ResetPassword';
+import AuthSuccess from './pages/Auth/AuthSuccess';
 
 import InstallPrompt from "./components/PWA/InstallPrompt";
 import DashboardLayout from './components/DashboardLayout/DashboardLayout';
@@ -28,8 +29,9 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/verify" element={<Verification />} />
+            <Route path="/auth/success" element={<AuthSuccess />} />
           </Route>
 
           <Route

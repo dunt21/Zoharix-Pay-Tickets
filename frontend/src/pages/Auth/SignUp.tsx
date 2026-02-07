@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaUser, FaEnvelope } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { useToast } from '../../context/ToastContext';
@@ -227,6 +228,35 @@ const SignUp: React.FC = () => {
                     {isLoading ? 'Creating Account...' : 'Create Account'}
                 </Button>
             </form>
+
+            <div className="auth-separator" style={{ margin: '1.5rem 0', textAlign: 'center', position: 'relative' }}>
+                <span style={{ background: 'white', padding: '0 10px', color: '#666', position: 'relative', zIndex: 1 }}>OR</span>
+                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: '#eee' }}></div>
+            </div>
+
+            <a 
+                href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/auth/google`}
+                className="btn-google full-width"
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    padding: '12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '8px',
+                    background: 'white',
+                    color: '#333',
+                    textDecoration: 'none',
+                    fontWeight: 500,
+                    transition: 'all 0.2s',
+                    cursor: 'pointer',
+                    marginBottom: '1.5rem'
+                }}
+            >
+                <FcGoogle style={{ fontSize: '20px' }} />
+                Sign up with Google
+            </a>
 
             <p className="auth-footer-text">
                 Already have an account? <Link to="/login">Log In</Link>

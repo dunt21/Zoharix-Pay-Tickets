@@ -16,6 +16,8 @@ export interface IUser extends Document {
   interests?: string[];
   createdAt: Date;
   updatedAt: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
 }
 
 const userSchema = new Schema<IUser>({
@@ -72,7 +74,13 @@ const userSchema = new Schema<IUser>({
   },
   interests: [{
     type: String
-  }]
+  }],
+  resetPasswordToken: {
+    type: String
+  },
+  resetPasswordExpires: {
+    type: Date
+  }
 }, {
   timestamps: true
 });

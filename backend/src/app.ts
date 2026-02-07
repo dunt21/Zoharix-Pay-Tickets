@@ -37,6 +37,9 @@ app.use(hpp()); // Protects against HTTP Parameter Pollution
 // CORS middleware
 app.use(cors(corsOptions));
 
+import passport from './config/passport';
+app.use(passport.initialize());
+
 // Define API Prefix
 const apiPrefix = `/api/${serverConfig.apiVersion}`;
 
